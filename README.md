@@ -32,8 +32,7 @@ Airplane mode, elevator rides, subway tunnels, or lost signals: users usually se
 - **One Line Setup**.
 - **Honest Reachability**: Real HTTP ping checks with debouncing (no false alarms).
 - **Three Modes**: [`Spin`](#1-spin-mode-default), [`Picker`](#2-picker-catalog-mode), or [`Single Game`](#3-single-game-mode).
-- **Three Built-in Games**: [Breakout](#built-in-games), [Memory Match](#built-in-games), and [Snake](#built-in-games).
-
+- **Built-in Games**
 - **Adaptive Theming**.
 - **AI-Agent Ready**: Includes [`llms.txt`](llms.txt) for Cursor, Copilot, and Claude.
 

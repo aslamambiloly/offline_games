@@ -482,7 +482,7 @@ class _OfflineGamesState extends State<OfflineGames>
                                     ),
                                     Positioned(
                                       top: 12,
-                                      left: 12,
+                                      left: 16,
                                       child: RetroCloseButton(
                                         onPressed: _handleExit,
                                       ),
@@ -532,7 +532,7 @@ class _OfflineGamesState extends State<OfflineGames>
                                   ),
                                   Positioned(
                                     top: 12,
-                                    left: 12,
+                                    left: 16,
                                     child: RetroCloseButton(
                                       onPressed: _handleExit,
                                     ),
