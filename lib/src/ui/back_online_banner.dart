@@ -20,27 +20,17 @@ class BackOnlineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final cardBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF09160E);
-    final cardBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final iconBg = isLight ? const Color(0xFFDCFCE7) : const Color(0xFF102619);
-    final iconBorder = isLight
-        ? const Color(0xFF16A34A)
-        : const Color(0xFF39FF14).withValues(alpha: 0.7);
-    final glyphColor =
-        isLight ? const Color(0xFF15803D) : const Color(0xFF39FF14);
-    final titleColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final subtitleColor =
-        isLight ? const Color(0xFF4B5563) : const Color(0xFF8E9CB8);
-    final keepBtnColor =
-        isLight ? const Color(0xFFE5E7EB) : const Color(0xFF162319);
-    final keepBtnText =
-        isLight ? const Color(0xFF111827) : const Color(0xFF8E9CB8);
-    final backBtnColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final backBtnText = isLight ? const Color(0xFFFFFFFF) : Colors.black;
+    const cardBg = Color(0xFFFFFFFF);
+    const cardBorder = Color(0xFF000000);
+    const iconBg = Color(0xFFDCFCE7);
+    const iconBorder = Color(0xFF000000);
+    const glyphColor = Color(0xFF15803D);
+    const titleColor = Color(0xFF000000);
+    const subtitleColor = Color(0xFF4B5563);
+    const keepBtnColor = Color(0xFFE5E7EB);
+    const keepBtnText = Color(0xFF111827);
+    const backBtnColor = Color(0xFF000000);
+    const backBtnText = Color(0xFFFFFFFF);
 
     return Semantics(
       label: "Connection restored notification dialog. You're back online.",
@@ -75,27 +65,27 @@ class BackOnlineBanner extends StatelessWidget {
                       ],
                     ),
                     alignment: Alignment.center,
-                    child: PixelGlyphWidget(
+                    child: const PixelGlyphWidget(
                       type: PixelGlyphType.alien,
                       pixelSize: 4.5,
                       color: glyphColor,
-                      glow: !isLight,
+                      glow: false,
                     ),
                   ),
                   const SizedBox(width: 14),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         PixelText(
-                          "You're back online!",
+                          "TIMELINE RESTORED!",
                           pixelSize: 2.0,
                           color: titleColor,
-                          glowColor: isLight ? null : titleColor,
+                          glowColor: null,
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         PixelText(
-                          'KEEP PLAYING OR RETURN TO APP?',
+                          'KEEP GAMING OR RETURN TO APP?',
                           pixelSize: 1.3,
                           color: subtitleColor,
                         ),
@@ -113,6 +103,7 @@ class BackOnlineBanner extends StatelessWidget {
                     onPressed: onKeepPlaying,
                     color: keepBtnColor,
                     textColor: keepBtnText,
+                    borderColor: const Color(0xFF000000),
                     pixelSize: 1.6,
                     minWidth: 110,
                   ),
@@ -122,6 +113,7 @@ class BackOnlineBanner extends StatelessWidget {
                     onPressed: onBackToApp,
                     color: backBtnColor,
                     textColor: backBtnText,
+                    borderColor: const Color(0xFF000000),
                     pixelSize: 1.6,
                     minWidth: 110,
                   ),

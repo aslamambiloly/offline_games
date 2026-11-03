@@ -188,13 +188,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Playing Dummy Game'), findsOneWidget);
-      expect(find.text("You're back online!"), findsNothing);
+      expect(find.text('TIMELINE RESTORED!'), findsNothing);
 
       // Connection restored!
       fakeConnectivity.emit(true);
       await tester.pumpAndSettle();
 
-      expect(find.text("You're back online!"), findsOneWidget);
+      expect(find.text('TIMELINE RESTORED!'), findsOneWidget);
       expect(find.text('Keep playing'), findsOneWidget);
       expect(find.text('Back to app'), findsOneWidget);
 
@@ -202,7 +202,7 @@ void main() {
       await tester.tap(find.text('Keep playing'));
       await tester.pumpAndSettle();
 
-      expect(find.text("You're back online!"), findsNothing);
+      expect(find.text('TIMELINE RESTORED!'), findsNothing);
       expect(find.text('Playing Dummy Game'), findsOneWidget);
     });
 

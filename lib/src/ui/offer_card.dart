@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'retro_pixel_glyph.dart';
 import 'retro_pixel_text.dart';
 import 'retro_screen.dart';
-import 'theme.dart';
 
 /// Dismissible offer card presented when the device loses internet connectivity,
 /// styled with authentic retro 8-bit pixel vectors.
@@ -88,27 +87,20 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
   @override
   Widget build(BuildContext context) {
     final disableAnim = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
-    final theme = OfflineGamesTheme.of(context);
-    final isLight = Theme.of(context).brightness == Brightness.light;
     final isBackOnline = widget.isBackOnline;
 
-    final cardBg = theme.backgroundColor ??
-        (isLight ? const Color(0xFFFFFFFF) : const Color(0xFF000000));
-    final borderColor = isBackOnline
-        ? (isLight ? const Color(0xFF000000) : const Color(0xFF39FF14))
-        : (isLight
-            ? const Color(0xFF000000)
-            : (theme.primaryColor ?? const Color(0xFF00F0FF)));
+    // Both Dark and Light modes use the clean, high-contrast light mode card styling
+    const cardBg = Color(0xFFFFFFFF);
+    const borderColor = Color(0xFF000000);
     final iconBg = isBackOnline
-        ? (isLight ? const Color(0xFFDCFCE7) : const Color(0xFF102619))
-        : (isLight ? const Color(0xFFF3F4F6) : const Color(0xFF14192A));
-    final titleColor = isBackOnline
-        ? (isLight ? const Color(0xFF000000) : const Color(0xFF39FF14))
-        : (isLight
-            ? const Color(0xFF000000)
-            : (theme.primaryColor ?? const Color(0xFF00F0FF)));
-    final subtitleColor =
-        isLight ? const Color(0xFF4B5563) : const Color(0xFF8E9CB8);
+        ? const Color(0xFFDCFCE7)
+        : const Color(0xFFF3F4F6);
+    const iconBorder = Color(0xFF000000);
+    final glyphColor = isBackOnline
+        ? const Color(0xFF15803D)
+        : const Color(0xFF000000);
+    const titleColor = Color(0xFF000000);
+    const subtitleColor = Color(0xFF4B5563);
 
     final displayTitle = isBackOnline ? 'TIMELINE RESTORED!' : widget.title;
     final displaySubtitle = isBackOnline
@@ -138,7 +130,7 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
                     decoration: BoxDecoration(
                       color: iconBg,
                       border: Border.all(
-                        color: borderColor.withValues(alpha: 0.6),
+                        color: iconBorder,
                         width: 2,
                       ),
                       boxShadow: const [
@@ -155,14 +147,8 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
                           ? PixelGlyphType.alien
                           : PixelGlyphType.gamepad,
                       pixelSize: 4.5,
-                      color: isBackOnline
-                          ? (isLight
-                              ? const Color(0xFF15803D)
-                              : const Color(0xFF39FF14))
-                          : (isLight
-                              ? const Color(0xFF000000)
-                              : const Color(0xFF00FFA3)),
-                      glow: !isLight,
+                      color: glyphColor,
+                      glow: false,
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -174,7 +160,7 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
                           displayTitle,
                           pixelSize: 2.0,
                           color: titleColor,
-                          glowColor: isLight ? null : titleColor,
+                          glowColor: null,
                         ),
                         const SizedBox(height: 6),
                         PixelText(
@@ -194,12 +180,9 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
                   RetroPixelButton(
                     label: dismissLabel,
                     onPressed: _handleDismiss,
-                    color: isLight
-                        ? const Color(0xFFE5E7EB)
-                        : const Color(0xFF1E2338),
-                    textColor: isLight
-                        ? const Color(0xFF111827)
-                        : const Color(0xFF8E9CB8),
+                    color: const Color(0xFFE5E7EB),
+                    textColor: const Color(0xFF111827),
+                    borderColor: const Color(0xFF000000),
                     pixelSize: 1.6,
                     minWidth: 84,
                   ),
@@ -207,10 +190,9 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
                   RetroPixelButton(
                     label: primaryLabel,
                     onPressed: widget.onPlay,
-                    color: isLight
-                        ? const Color(0xFF000000)
-                        : const Color(0xFF39FF14),
-                    textColor: isLight ? Colors.white : Colors.black,
+                    color: const Color(0xFF000000),
+                    textColor: const Color(0xFFFFFFFF),
+                    borderColor: const Color(0xFF000000),
                     pixelSize: 1.6,
                     minWidth: 90,
                   ),

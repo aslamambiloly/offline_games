@@ -180,6 +180,7 @@ class RetroPixelButton extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
     this.minWidth = 100.0,
     this.minHeight = 44.0,
+    this.borderColor,
   });
 
   /// The text label to display in [PixelText].
@@ -193,6 +194,9 @@ class RetroPixelButton extends StatefulWidget {
 
   /// Text color. Defaults to pure white in light mode and dark navy in dark mode.
   final Color? textColor;
+
+  /// Optional custom border color. Defaults to black in light mode and white with alpha in dark mode.
+  final Color? borderColor;
 
   /// Pixel size for the label.
   final double pixelSize;
@@ -220,8 +224,12 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
         isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
     final defaultText =
         isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E);
+    final defaultBorder = isLight
+        ? const Color(0xFF000000)
+        : Colors.white.withValues(alpha: 0.6);
     final buttonColor = widget.color ?? defaultBg;
     final textCol = widget.textColor ?? defaultText;
+    final borderCol = widget.borderColor ?? defaultBorder;
 
     final isEnabled = widget.onPressed != null;
     final effectiveColor =
@@ -254,9 +262,7 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
           decoration: BoxDecoration(
             color: effectiveColor,
             border: Border.all(
-              color: isLight
-                  ? const Color(0xFF000000)
-                  : Colors.white.withValues(alpha: 0.6),
+              color: borderCol,
               width: border,
             ),
             boxShadow: [
