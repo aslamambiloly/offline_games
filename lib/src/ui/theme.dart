@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 
-/// Theming options for the offline arcade cards, frames, and spinners.
+/// Theming options for the offline arcade cards, frames, and spinners,
+/// defaulting to the authentic Vintage Screen Pixel Vectors aesthetic.
 class OfflineGamesTheme extends ThemeExtension<OfflineGamesTheme> {
   /// Creates an [OfflineGamesTheme].
   const OfflineGamesTheme({
     this.primaryColor,
     this.cardColor,
-    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.accentGradient,
   });
 
-  /// Primary accent color (defaults to [ColorScheme.primary] if null).
+  /// Primary accent neon color (defaults to [Color(0xFF00F0FF)] neon cyan).
   final Color? primaryColor;
 
-  /// Card background color (defaults to [ColorScheme.surfaceContainerHigh] or [ColorScheme.surface]).
+  /// Card CRT background color (defaults to [Color(0xFF0D101C)]).
   final Color? cardColor;
 
-  /// Rounded corner radius for offer cards and dialogs.
+  /// Corner radius for retro cards and frames.
   final BorderRadius borderRadius;
 
-  /// Optional vibrant gradient for arcade headers and spin wheels.
+  /// Optional vibrant arcade gradient.
   final Gradient? accentGradient;
 
   /// Resolves the effective [OfflineGamesTheme] from the ambient [BuildContext].
@@ -27,17 +28,14 @@ class OfflineGamesTheme extends ThemeExtension<OfflineGamesTheme> {
     final extension = Theme.of(context).extension<OfflineGamesTheme>();
     if (extension != null) return extension;
 
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return OfflineGamesTheme(
-      primaryColor: theme.colorScheme.primary,
-      cardColor: isDark ? const Color(0xFF1E1E2C) : theme.colorScheme.surface,
-      borderRadius: const BorderRadius.all(Radius.circular(20)),
+    return const OfflineGamesTheme(
+      primaryColor: Color(0xFF00F0FF),
+      cardColor: Color(0xFF0D101C),
+      borderRadius: BorderRadius.all(Radius.circular(4)),
       accentGradient: LinearGradient(
         colors: [
-          theme.colorScheme.primary,
-          theme.colorScheme.tertiary,
+          Color(0xFF00F0FF),
+          Color(0xFF39FF14),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/game_session.dart';
+import '../../../ui/retro_pixel_glyph.dart';
+import '../../../ui/retro_pixel_text.dart';
+import '../../../ui/retro_screen.dart';
 import '../logic/tic_tac_toe_ai.dart';
 import '../logic/tic_tac_toe_state.dart';
 
-/// Interactive UI for the Tic Tac Toe mini-game.
+/// Interactive UI for the Tic Tac Toe mini-game in Vintage Pixel Vector theme.
 class TicTacToeWidget extends StatefulWidget {
   /// Creates a [TicTacToeWidget].
   const TicTacToeWidget({super.key, required this.session});
@@ -76,7 +79,6 @@ class _TicTacToeWidgetState extends State<TicTacToeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final winningLine = _state.winningLine ?? const <int>[];
 
     return Center(
@@ -87,70 +89,63 @@ class _TicTacToeWidgetState extends State<TicTacToeWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Scoreboard Bar
-              Container(
+              // Retro Scoreboard HUD
+              RetroPixelCard(
+                borderColor: const Color(0xFF2C324E),
+                backgroundColor: const Color(0xFF0F121E),
+                shadowOffset: 3,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-                  ),
-                ),
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _ScoreColumn(
-                      label: 'YOU (❌)',
+                      label: 'YOU (X)',
                       score: _playerWins,
-                      color: Colors.blueAccent,
+                      color: const Color(0xFF00F0FF),
                     ),
                     Container(
-                      width: 1,
-                      height: 32,
-                      color: colorScheme.outlineVariant,
+                      width: 2,
+                      height: 28,
+                      color: const Color(0xFF2C324E),
                     ),
                     _ScoreColumn(
                       label: 'DRAWS',
                       score: _draws,
-                      color: colorScheme.onSurfaceVariant,
+                      color: const Color(0xFFFFB800),
                     ),
                     Container(
-                      width: 1,
-                      height: 32,
-                      color: colorScheme.outlineVariant,
+                      width: 2,
+                      height: 28,
+                      color: const Color(0xFF2C324E),
                     ),
                     _ScoreColumn(
-                      label: 'AI (⭕)',
+                      label: 'AI (O)',
                       score: _aiWins,
-                      color: Colors.deepOrangeAccent,
+                      color: const Color(0xFFFF2A85),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-              // Status text
-              Text(
+
+              // Neon Status Text
+              PixelText(
                 _getStatusText(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: _getStatusColor(colorScheme),
-                    ),
+                pixelSize: 2.0,
+                color: _getStatusColor(),
+                glowColor: _getStatusColor(),
               ),
-              const SizedBox(height: 20),
-              // 3x3 Game Grid
+              const SizedBox(height: 18),
+
+              // 3x3 Retro Arcade CRT Grid
               AspectRatio(
                 aspectRatio: 1.0,
-                child: Container(
+                child: RetroPixelCard(
+                  borderColor: const Color(0xFF2C324E),
+                  backgroundColor: const Color(0xFF090C16),
+                  shadowOffset: 4,
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                    ),
-                  ),
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
@@ -167,24 +162,31 @@ class _TicTacToeWidgetState extends State<TicTacToeWidget> {
                       return Semantics(
                         label: 'Grid cell $index, ${cell.name}',
                         button: true,
-                        child: InkWell(
+                        child: GestureDetector(
                           key: ValueKey('tic_tac_toe_cell_$index'),
                           onTap: () => _handleCellTap(index),
-                          borderRadius: BorderRadius.circular(14),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
                               color: isWinningCell
-                                  ? colorScheme.primary.withValues(alpha: 0.25)
-                                  : colorScheme.surface,
-                              borderRadius: BorderRadius.circular(14),
+                                  ? const Color(0xFF0B2416)
+                                  : const Color(0xFF131828),
                               border: Border.all(
                                 color: isWinningCell
-                                    ? colorScheme.primary
-                                    : colorScheme.outlineVariant
-                                        .withValues(alpha: 0.4),
-                                width: isWinningCell ? 2.5 : 1.0,
+                                    ? const Color(0xFF39FF14)
+                                    : const Color(0xFF2C3552),
+                                width: isWinningCell ? 2.5 : 2.0,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: isWinningCell
+                                      ? const Color(0xFF39FF14)
+                                          .withValues(alpha: 0.4)
+                                      : Colors.black,
+                                  offset: const Offset(2, 2),
+                                  blurRadius: isWinningCell ? 6 : 0,
+                                ),
+                              ],
                             ),
                             alignment: Alignment.center,
                             child: _renderCellContent(cell),
@@ -196,18 +198,19 @@ class _TicTacToeWidgetState extends State<TicTacToeWidget> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Action Button
+
+              // Retro Action Button
               if (_state.isGameOver)
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(160, 48),
-                  ),
+                RetroPixelButton(
+                  label: 'PLAY AGAIN',
                   onPressed: _resetBoard,
-                  icon: const Icon(Icons.refresh_rounded, size: 20),
-                  label: const Text('Play Again'),
+                  color: const Color(0xFF39FF14),
+                  textColor: Colors.black,
+                  pixelSize: 2.0,
+                  minWidth: 160,
                 )
               else
-                const SizedBox(height: 48),
+                const SizedBox(height: 44),
             ],
           ),
         ),
@@ -218,29 +221,43 @@ class _TicTacToeWidgetState extends State<TicTacToeWidget> {
   Widget? _renderCellContent(BoardCell cell) {
     return switch (cell) {
       BoardCell.empty => null,
-      BoardCell.x => const Text(
-          '❌',
-          style: TextStyle(fontSize: 36),
+      BoardCell.x => const Stack(
+          alignment: Alignment.center,
+          children: [
+            Opacity(opacity: 0.0, child: Text('❌')),
+            PixelGlyphWidget(
+              type: PixelGlyphType.cross,
+              pixelSize: 5.5,
+              glow: true,
+            ),
+          ],
         ),
-      BoardCell.o => const Text(
-          '⭕',
-          style: TextStyle(fontSize: 36),
+      BoardCell.o => const Stack(
+          alignment: Alignment.center,
+          children: [
+            Opacity(opacity: 0.0, child: Text('⭕')),
+            PixelGlyphWidget(
+              type: PixelGlyphType.ring,
+              pixelSize: 5.5,
+              glow: true,
+            ),
+          ],
         ),
     };
   }
 
   String _getStatusText() {
-    if (_state.winner == Player.x) return 'You Win! 🎉';
-    if (_state.winner == Player.o) return 'AI Wins! 🤖';
-    if (_state.isDraw) return "It's a Draw! 🤝";
-    return _state.currentTurn == Player.x ? 'Your Turn (❌)' : 'AI Turn (⭕)...';
+    if (_state.winner == Player.x) return 'YOU WIN!';
+    if (_state.winner == Player.o) return 'AI WINS!';
+    if (_state.isDraw) return 'DRAW GAME!';
+    return _state.currentTurn == Player.x ? 'YOUR TURN (X)' : 'AI THINKING...';
   }
 
-  Color _getStatusColor(ColorScheme colorScheme) {
-    if (_state.winner == Player.x) return Colors.green;
-    if (_state.winner == Player.o) return Colors.deepOrange;
-    if (_state.isDraw) return colorScheme.primary;
-    return colorScheme.onSurface;
+  Color _getStatusColor() {
+    if (_state.winner == Player.x) return const Color(0xFF39FF14);
+    if (_state.winner == Player.o) return const Color(0xFFFF2A85);
+    if (_state.isDraw) return const Color(0xFFFFB800);
+    return const Color(0xFF00F0FF);
   }
 }
 
@@ -260,21 +277,17 @@ class _ScoreColumn extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        PixelText(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
+          pixelSize: 1.5,
+          color: color,
         ),
-        const SizedBox(height: 2),
-        Text(
+        const SizedBox(height: 4),
+        PixelText(
           '$score',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          pixelSize: 2.2,
+          color: color,
+          glowColor: color,
         ),
       ],
     );

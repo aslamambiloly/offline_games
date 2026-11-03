@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/offline_game.dart';
 import '../storage/score_store.dart';
-import 'theme.dart';
+import 'retro_pixel_text.dart';
+import 'retro_screen.dart';
 
-/// Standalone arcade catalog grid widget letting players choose a mini-game.
+/// Standalone arcade catalog grid widget letting players choose a mini-game,
+/// styled with authentic retro 8-bit pixel vector cards.
 class GamePicker extends StatefulWidget {
   /// Creates a [GamePicker].
   const GamePicker({
@@ -51,9 +53,6 @@ class _GamePickerState extends State<GamePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = OfflineGamesTheme.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
@@ -62,16 +61,15 @@ class _GamePickerState extends State<GamePicker> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  'ARCADE GAMES',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2.0,
-                        color: colorScheme.primary,
-                      ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Center(
+                  child: PixelText(
+                    'ARCADE GAMES',
+                    pixelSize: 2.2,
+                    color: Color(0xFF00F0FF),
+                    glowColor: Color(0xFF00F0FF),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -93,81 +91,95 @@ class _GamePickerState extends State<GamePicker> {
                       label:
                           'Play ${game.meta.title} by $authorName${score != null ? ', best score $score' : ''}',
                       button: true,
-                      child: InkWell(
+                      child: GestureDetector(
                         onTap: () => widget.onSelected(game),
-                        borderRadius: theme.borderRadius,
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.cardColor,
-                            borderRadius: theme.borderRadius,
-                            border: Border.all(
-                              color: colorScheme.outlineVariant
-                                  .withValues(alpha: 0.5),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
+                        child: RetroPixelCard(
+                          borderColor: const Color(0xFF2C3552),
+                          backgroundColor: const Color(0xFF0E111E),
+                          shadowOffset: 3,
+                          padding: const EdgeInsets.all(14),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    game.meta.emoji,
-                                    style: const TextStyle(fontSize: 32),
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF161A2B),
+                                      border: Border.all(
+                                        color: const Color(0xFF00F0FF)
+                                            .withValues(alpha: 0.5),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      game.meta.emoji,
+                                      style: const TextStyle(fontSize: 22),
+                                    ),
                                   ),
                                   const Spacer(),
                                   if (score != null)
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
+                                          horizontal: 6, vertical: 3),
                                       decoration: BoxDecoration(
-                                        color: colorScheme.primaryContainer,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        '🏆 $score',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onPrimaryContainer,
+                                        color: const Color(0xFF1A1F30),
+                                        border: Border.all(
+                                          color: const Color(0xFFFFB800)
+                                              .withValues(alpha: 0.6),
+                                          width: 1.0,
                                         ),
+                                      ),
+                                      child: PixelText(
+                                        '🏆 $score',
+                                        pixelSize: 1.4,
+                                        color: const Color(0xFFFFB800),
                                       ),
                                     ),
                                 ],
                               ),
                               const Spacer(),
-                              Text(
+                              PixelText(
                                 game.meta.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                pixelSize: 1.8,
+                                color: const Color(0xFF39FF14),
+                                glowColor: const Color(0xFF39FF14),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
+                              const SizedBox(height: 4),
+                              PixelText(
                                 'by $authorName',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                      fontWeight: FontWeight.w500,
+                                pixelSize: 1.3,
+                                color: const Color(0xFFFFB800),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const PixelText(
+                                    'READY',
+                                    pixelSize: 1.2,
+                                    color: Color(0xFF00F0FF),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00F0FF),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1,
+                                      ),
                                     ),
+                                    child: const Icon(
+                                      Icons.play_arrow_rounded,
+                                      size: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

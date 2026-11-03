@@ -18,7 +18,8 @@ Most apps greet disconnected users with an empty screen, a sad gray dinosaur, or
 - 🎰 **Spin, Picker, or Single**: Let players spin an animated lucky wheel, browse a retro-modern catalog grid, or launch a direct game.
 - 🛡️ **Never Hijacks Your App**: Non-intrusive card, shown once per offline episode, easily dismissible, and suppressible on critical screens (e.g. checkout).
 - 🏆 **Mandatory Creator Credit**: Every game proudly credits its author across the picker, spinner, and in-game frame.
-- ⚡ **Pure Flutter & Lightweight**: Zero Flame, zero audio blobs, zero bundled binary assets. Games render crisply using widgets and `CustomPainter`.
+- 👾 **Vintage Pixel Vector Aesthetic**: Pure vector-rendered 5x7 typography, CRT phosphor scanlines, and 8-bit glyph sprites with zero font files (.ttf) and zero extra dependencies.
+- ⚡ **Pure Flutter & Featherweight (< 45 KB)**: Zero Flame, zero audio blobs, zero bundled binary assets. Games render crisply at any DPI using widgets and `CustomPainter`.
 
 ---
 

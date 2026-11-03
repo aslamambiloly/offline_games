@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import '../../../core/game_session.dart';
+import '../../../ui/retro_pixel_text.dart';
+import '../../../ui/retro_screen.dart';
 import '../logic/snake_state.dart';
 import 'snake_painter.dart';
 
-/// Interactive UI for the classic Snake arcade game.
+/// Interactive UI for the classic Snake arcade game in Vintage Pixel Vector theme.
 class SnakeWidget extends StatefulWidget {
   /// Creates a [SnakeWidget].
   const SnakeWidget({
@@ -123,6 +125,10 @@ class _SnakeWidgetState extends State<SnakeWidget>
         event.logicalKey == LogicalKeyboardKey.keyD) {
       _changeDirection(Direction.right);
       return KeyEventResult.handled;
+    } else if (event.logicalKey == LogicalKeyboardKey.space &&
+        _state.isGameOver) {
+      _startNewGame();
+      return KeyEventResult.handled;
     }
 
     return KeyEventResult.ignored;
@@ -130,8 +136,6 @@ class _SnakeWidgetState extends State<SnakeWidget>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Focus(
       focusNode: _focusNode,
       autofocus: true,
@@ -143,38 +147,35 @@ class _SnakeWidgetState extends State<SnakeWidget>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: [
-                // Top Score Bar
-                Container(
+                // Top Retro Scoreboard
+                RetroPixelCard(
+                  borderColor: const Color(0xFF2C324E),
+                  backgroundColor: const Color(0xFF0F121E),
+                  shadowOffset: 3,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      PixelText(
                         'Score: ${_state.score}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        pixelSize: 2.0,
+                        color: const Color(0xFF39FF14),
+                        glowColor: const Color(0xFF39FF14),
                       ),
                       if (widget.session.bestScore != null)
-                        Text(
+                        PixelText(
                           '🏆 Best: ${widget.session.bestScore}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.primary,
-                          ),
+                          pixelSize: 1.8,
+                          color: const Color(0xFFFFB800),
+                          glowColor: const Color(0xFFFFB800),
                         ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Arena Grid
+
+                // CRT Arena Grid
                 Expanded(
                   child: GestureDetector(
                     key: const ValueKey('snake_viewport'),
@@ -198,17 +199,16 @@ class _SnakeWidgetState extends State<SnakeWidget>
                       aspectRatio: 1.0,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(16),
+                          color: const Color(0xFF090B14),
                           border: Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.4),
+                            color: const Color(0xFF2C324E),
+                            width: 3.0,
                           ),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
+                              color: Colors.black,
+                              offset: Offset(4, 4),
+                              blurRadius: 0,
                             ),
                           ],
                         ),
@@ -219,44 +219,40 @@ class _SnakeWidgetState extends State<SnakeWidget>
                               child: CustomPaint(
                                 painter: SnakePainter(
                                   state: _state,
-                                  primaryColor: const Color(0xFF10B981),
-                                  accentColor: const Color(0xFFEF4444),
-                                  gridColor:
-                                      Colors.white.withValues(alpha: 0.05),
+                                  primaryColor: const Color(0xFF39FF14),
+                                  accentColor: const Color(0xFFFF2A85),
+                                  gridColor: const Color(0xFF161A2B),
                                 ),
                               ),
                             ),
+                            // Retro Game Over Screen
                             if (_state.isGameOver)
                               Container(
-                                color: Colors.black87,
+                                color: Colors.black.withValues(alpha: 0.88),
                                 alignment: Alignment.center,
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('💥',
-                                        style: TextStyle(fontSize: 48)),
-                                    const SizedBox(height: 8),
-                                    const Text(
+                                    const PixelText(
                                       'Game Over',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
+                                      pixelSize: 3.2,
+                                      color: Color(0xFFFF2A85),
+                                      glowColor: Color(0xFFFF2A85),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Score: ${_state.score}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white70,
-                                      ),
+                                    const SizedBox(height: 12),
+                                    PixelText(
+                                      'FINAL SCORE: ${_state.score}',
+                                      pixelSize: 2.0,
+                                      color: const Color(0xFFFFB800),
                                     ),
-                                    const SizedBox(height: 16),
-                                    FilledButton.icon(
+                                    const SizedBox(height: 20),
+                                    RetroPixelButton(
+                                      label: 'PLAY AGAIN',
                                       onPressed: _startNewGame,
-                                      icon: const Icon(Icons.refresh_rounded),
-                                      label: const Text('Play Again'),
+                                      color: const Color(0xFF39FF14),
+                                      textColor: Colors.black,
+                                      pixelSize: 2.0,
                                     ),
                                   ],
                                 ),
@@ -268,7 +264,8 @@ class _SnakeWidgetState extends State<SnakeWidget>
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Accessible D-Pad Controls
+
+                // Retro Arcade D-Pad Controls
                 _DpadControls(
                   onDirectionPressed: _changeDirection,
                 ),
@@ -288,56 +285,79 @@ class _DpadControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const btnSize = 46.0;
+
+    Widget buildDpadBtn({
+      required Key key,
+      required String label,
+      required IconData icon,
+      required Direction direction,
+    }) {
+      return Semantics(
+        label: label,
+        button: true,
+        child: GestureDetector(
+          key: key,
+          onTap: () => onDirectionPressed(direction),
+          child: Container(
+            width: btnSize,
+            height: btnSize,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E2338),
+              border: Border.all(
+                color: const Color(0xFF4A5578),
+                width: 2.0,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: Offset(2, 2),
+                  blurRadius: 0,
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF00F0FF),
+              size: 26,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Semantics(
+        buildDpadBtn(
+          key: const ValueKey('dpad_up'),
           label: 'Move Up',
-          button: true,
-          child: IconButton.filledTonal(
-            key: const ValueKey('dpad_up'),
-            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-            icon: const Icon(Icons.keyboard_arrow_up_rounded),
-            onPressed: () => onDirectionPressed(Direction.up),
-          ),
+          icon: Icons.keyboard_arrow_up_rounded,
+          direction: Direction.up,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Semantics(
+            buildDpadBtn(
+              key: const ValueKey('dpad_left'),
               label: 'Move Left',
-              button: true,
-              child: IconButton.filledTonal(
-                key: const ValueKey('dpad_left'),
-                constraints:
-                    const BoxConstraints.tightFor(width: 48, height: 48),
-                icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                onPressed: () => onDirectionPressed(Direction.left),
-              ),
+              icon: Icons.keyboard_arrow_left_rounded,
+              direction: Direction.left,
             ),
-            const SizedBox(width: 48),
-            Semantics(
+            const SizedBox(width: btnSize),
+            buildDpadBtn(
+              key: const ValueKey('dpad_right'),
               label: 'Move Right',
-              button: true,
-              child: IconButton.filledTonal(
-                key: const ValueKey('dpad_right'),
-                constraints:
-                    const BoxConstraints.tightFor(width: 48, height: 48),
-                icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                onPressed: () => onDirectionPressed(Direction.right),
-              ),
+              icon: Icons.keyboard_arrow_right_rounded,
+              direction: Direction.right,
             ),
           ],
         ),
-        Semantics(
+        buildDpadBtn(
+          key: const ValueKey('dpad_down'),
           label: 'Move Down',
-          button: true,
-          child: IconButton.filledTonal(
-            key: const ValueKey('dpad_down'),
-            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-            icon: const Icon(Icons.keyboard_arrow_down_rounded),
-            onPressed: () => onDirectionPressed(Direction.down),
-          ),
+          icon: Icons.keyboard_arrow_down_rounded,
+          direction: Direction.down,
         ),
       ],
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'retro_pixel_text.dart';
+import 'retro_screen.dart';
 
 /// Floating banner shown when internet connectivity is restored during an active game.
 class BackOnlineBanner extends StatelessWidget {
@@ -17,74 +19,70 @@ class BackOnlineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Semantics(
       label: "Connection restored notification banner. You're back online.",
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: colorScheme.primary.withValues(alpha: 0.5),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4CAF50),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    "You're back online!",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: RetroPixelCard(
+          borderColor: const Color(0xFF39FF14),
+          backgroundColor: const Color(0xFF09160E),
+          shadowOffset: 3,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF39FF14),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xFF39FF14),
+                          blurRadius: 6,
                         ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(88, 44),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: PixelText(
+                      "You're back online!",
+                      pixelSize: 1.8,
+                      color: Color(0xFF39FF14),
+                      glowColor: Color(0xFF39FF14),
+                    ),
                   ),
-                  onPressed: onKeepPlaying,
-                  child: const Text('Keep playing'),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(88, 44),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RetroPixelButton(
+                    label: 'Keep playing',
+                    onPressed: onKeepPlaying,
+                    color: const Color(0xFF162319),
+                    textColor: const Color(0xFF8E9CB8),
+                    pixelSize: 1.5,
+                    minWidth: 80,
                   ),
-                  onPressed: onBackToApp,
-                  child: const Text('Back to app'),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 8),
+                  RetroPixelButton(
+                    label: 'Back to app',
+                    onPressed: onBackToApp,
+                    color: const Color(0xFF39FF14),
+                    textColor: Colors.black,
+                    pixelSize: 1.5,
+                    minWidth: 80,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/offline_game.dart';
-import 'theme.dart';
+import 'retro_pixel_text.dart';
+import 'retro_screen.dart';
 
 /// Helper to select a random game while guaranteeing that the same game
 /// is never picked twice consecutively if more than one game is available.
@@ -17,7 +18,7 @@ OfflineGame pickRandomGame({
   return candidates[random.nextInt(candidates.length)];
 }
 
-/// Standalone animated arcade wheel / slot spinner widget.
+/// Standalone animated arcade wheel / slot spinner widget in Vintage CRT theme.
 class GameSpinner extends StatefulWidget {
   /// Creates a [GameSpinner].
   const GameSpinner({
@@ -68,35 +69,43 @@ class _GameSpinnerState extends State<GameSpinner>
 
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutCubic,
+      curve: Curves.decelerate,
     );
 
-    _controller.addListener(() {
-      if (_isSpinning && widget.games.isNotEmpty) {
-        setState(() {
-          _cycleIndex = (_animation.value * 15).floor() % widget.games.length;
-        });
+    _animation.addListener(() {
+      if (_isSpinning && widget.games.length > 1) {
+        final totalSteps = widget.games.length * 4;
+        final currentStep = (_animation.value * totalSteps).floor();
+        if (currentStep != _cycleIndex) {
+          setState(() {
+            _cycleIndex = currentStep;
+          });
+        }
       }
     });
 
-    _controller.addStatusListener((status) {
+    _animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
           _isSpinning = false;
         });
       }
     });
-  }
 
-  bool _initialized = false;
+    // Pick initial game
+    _selectedGame = pickRandomGame(
+      games: widget.games,
+      previous: _lastGame,
+      random: _random,
+    );
+    _lastGame = _selectedGame;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      _initialized = true;
-      _spin();
-    }
+    // Trigger spin on post-frame callback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _spin();
+      }
+    });
   }
 
   @override
@@ -106,186 +115,183 @@ class _GameSpinnerState extends State<GameSpinner>
   }
 
   void _spin() {
-    if (widget.games.isEmpty) return;
+    if (_isSpinning) return;
 
-    final target = pickRandomGame(
+    final picked = pickRandomGame(
       games: widget.games,
       previous: _lastGame,
       random: _random,
     );
 
-    _selectedGame = target;
-    _lastGame = target;
+    _selectedGame = picked;
+    _lastGame = picked;
 
     final disableAnim = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     if (disableAnim) {
       _isSpinning = false;
-    } else {
-      _isSpinning = true;
-      _controller.forward(from: 0.0);
+      setState(() {});
+      return;
     }
-    setState(() {});
+
+    _isSpinning = true;
+    _cycleIndex = 0;
+    _controller.forward(from: 0.0);
+  }
+
+  OfflineGame _getDisplayedGame() {
+    if (!_isSpinning) {
+      return _selectedGame ?? widget.games.first;
+    }
+    final index = _cycleIndex % widget.games.length;
+    return widget.games[index];
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = OfflineGamesTheme.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final gameToShow = _isSpinning
-        ? widget.games[_cycleIndex]
-        : (_selectedGame ?? widget.games.first);
-
+    final gameToShow = _getDisplayedGame();
     final authorName = gameToShow.meta.authors.first.name;
 
     return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        padding: const EdgeInsets.all(24),
-        constraints: const BoxConstraints(maxWidth: 420),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: theme.borderRadius,
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Arcade Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: RetroPixelCard(
+            borderColor: const Color(0xFF00F0FF),
+            backgroundColor: const Color(0xFF0D101C),
+            shadowOffset: 4,
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('✨', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 8),
-                Text(
-                  'ARCADE SPINNER',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2.0,
-                        color: colorScheme.primary,
-                      ),
+                // Arcade Header
+                const Center(
+                  child: PixelText(
+                    'ARCADE SPINNER',
+                    pixelSize: 2.0,
+                    color: Color(0xFF00F0FF),
+                    glowColor: Color(0xFF00F0FF),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                const Text('✨', style: TextStyle(fontSize: 18)),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Slot Wheel Viewport
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              height: 140,
-              decoration: BoxDecoration(
-                gradient: theme.accentGradient,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
+                const SizedBox(height: 18),
+
+                // CRT Slot Wheel Viewport
+                Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF070912),
+                    border: Border.all(
+                      color: const Color(0xFF2C3552),
+                      width: 2.5,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(3, 3),
+                        blurRadius: 0,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    gameToShow.meta.emoji,
-                    style: const TextStyle(fontSize: 54),
+                  child: CrtScanlinesOverlay(
+                    scanlineOpacity: 0.12,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            gameToShow.meta.emoji,
+                            style: const TextStyle(fontSize: 48),
+                          ),
+                          const SizedBox(height: 6),
+                          PixelText(
+                            gameToShow.meta.title,
+                            pixelSize: 2.2,
+                            color: const Color(0xFF39FF14),
+                            glowColor: const Color(0xFF39FF14),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                ),
+                const SizedBox(height: 14),
+
+                // Author Attribution (C7 & 6.5)
+                Center(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF161A2B),
+                      border: Border.all(
+                        color: const Color(0xFFFFB800).withValues(alpha: 0.6),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.person_outline,
+                            size: 13, color: Color(0xFFFFB800)),
+                        const SizedBox(width: 4),
+                        PixelText(
+                          'by $authorName',
+                          pixelSize: 1.4,
+                          color: const Color(0xFFFFB800),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (gameToShow.meta.description.isNotEmpty) ...[
+                  const SizedBox(height: 10),
                   Text(
-                    gameToShow.meta.title,
+                    gameToShow.meta.description,
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      fontSize: 12,
+                      color: Color(0xFF8E9CB8),
                     ),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Author Attribution (C7 & 6.5)
-            Center(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 22),
+
+                // Action Buttons
+                Row(
                   children: [
-                    const Icon(Icons.person_outline, size: 14),
-                    const SizedBox(width: 6),
-                    Text(
-                      'by $authorName',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                    Expanded(
+                      child: RetroPixelButton(
+                        label: 'Spin again',
+                        onPressed: _isSpinning ? null : _spin,
+                        color: const Color(0xFF1E2338),
+                        textColor: const Color(0xFF8E9CB8),
+                        pixelSize: 1.7,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: RetroPixelButton(
+                        label: 'Start Game',
+                        onPressed: _isSpinning
+                            ? null
+                            : () {
+                                if (_selectedGame != null) {
+                                  widget.onResult(_selectedGame!);
+                                }
+                              },
+                        color: const Color(0xFF39FF14),
+                        textColor: Colors.black,
+                        pixelSize: 1.7,
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            if (gameToShow.meta.description.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              Text(
-                gameToShow.meta.description,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                    ),
-                    onPressed: _isSpinning ? null : _spin,
-                    icon: const Icon(Icons.refresh_rounded, size: 20),
-                    label: const Text('Spin again'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                    ),
-                    onPressed: _isSpinning
-                        ? null
-                        : () {
-                            if (_selectedGame != null) {
-                              widget.onResult(_selectedGame!);
-                            }
-                          },
-                    icon: const Icon(Icons.play_arrow_rounded, size: 20),
-                    label: const Text('Start Game'),
-                  ),
-                ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

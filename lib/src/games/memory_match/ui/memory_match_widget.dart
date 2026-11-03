@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/game_session.dart';
+import '../../../ui/retro_pixel_glyph.dart';
+import '../../../ui/retro_pixel_text.dart';
+import '../../../ui/retro_screen.dart';
 import '../logic/memory_match_state.dart';
 
-/// Interactive UI for the Memory Match mini-game.
+/// Interactive UI for the Memory Match mini-game in a Vintage Pixel Vector theme.
 class MemoryMatchWidget extends StatefulWidget {
   /// Creates a [MemoryMatchWidget].
   const MemoryMatchWidget({
@@ -70,7 +73,7 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
         final disableAnim =
             MediaQuery.maybeDisableAnimationsOf(context) ?? false;
         final delay =
-            disableAnim ? Duration.zero : const Duration(milliseconds: 800);
+            disableAnim ? Duration.zero : const Duration(milliseconds: 700);
 
         _mismatchTimer?.cancel();
         _mismatchTimer = Timer(delay, () {
@@ -88,10 +91,32 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
     }
   }
 
+  PixelGlyphType _resolveGlyph(String emoji) {
+    switch (emoji) {
+      case '🚀':
+        return PixelGlyphType.alien;
+      case '⭐':
+        return PixelGlyphType.star;
+      case '💎':
+        return PixelGlyphType.sword;
+      case '🍕':
+        return PixelGlyphType.apple;
+      case '🎸':
+        return PixelGlyphType.gamepad;
+      case '🎉':
+        return PixelGlyphType.trophy;
+      case '🐱':
+        return PixelGlyphType.heart;
+      case '🔥':
+        return PixelGlyphType.potion;
+      default:
+        return PixelGlyphType
+            .values[emoji.hashCode.abs() % PixelGlyphType.values.length];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
@@ -99,41 +124,41 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             children: [
-              // Header stats bar
-              Container(
+              // Retro Scoreboard HUD Bar
+              RetroPixelCard(
+                borderColor: const Color(0xFF2C324E),
+                backgroundColor: const Color(0xFF0F121E),
+                shadowOffset: 3,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                  ),
-                ),
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
+                    PixelText(
                       'Moves: ${_state.movesCount}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      pixelSize: 1.8,
+                      color: const Color(0xFF00F0FF),
+                      glowColor: const Color(0xFF00F0FF),
                     ),
-                    Text(
+                    PixelText(
                       'Pairs: ${_state.pairsMatched}/${_state.totalPairs}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      ),
+                      pixelSize: 1.8,
+                      color: const Color(0xFF39FF14),
+                      glowColor: const Color(0xFF39FF14),
                     ),
                     if (widget.session.bestScore != null)
-                      Text(
-                        '🏆 ${widget.session.bestScore}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      PixelText(
+                        'Best: ${widget.session.bestScore}',
+                        pixelSize: 1.8,
+                        color: const Color(0xFFFFB800),
+                        glowColor: const Color(0xFFFFB800),
                       ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              // Card Grid
+              const SizedBox(height: 14),
+
+              // 8-Bit Pixel Card Grid
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -147,60 +172,54 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                     final card = _state.cards[index];
                     final isFaceUp = card.state != CardState.faceDown;
                     final isMatched = card.state == CardState.matched;
+                    final glyph = _resolveGlyph(card.emoji);
 
                     return Semantics(
                       label:
-                          'Card $index: ${isFaceUp ? card.emoji : "face down"}',
+                          'Card $index: ${isFaceUp ? glyph.semanticsLabel : "face down"}',
                       button: true,
-                      child: InkWell(
+                      child: GestureDetector(
                         key: ValueKey('memory_card_$index'),
                         onTap: () => _handleCardTap(index),
-                        borderRadius: BorderRadius.circular(14),
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
+                          duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
                             color: isMatched
-                                ? colorScheme.primaryContainer
+                                ? const Color(0xFF0B2416)
                                 : isFaceUp
-                                    ? colorScheme.surface
-                                    : colorScheme.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(14),
+                                    ? const Color(0xFF131828)
+                                    : const Color(0xFF171B2C),
                             border: Border.all(
                               color: isMatched
-                                  ? colorScheme.primary
+                                  ? const Color(0xFF39FF14)
                                   : isFaceUp
-                                      ? colorScheme.primary
-                                          .withValues(alpha: 0.5)
-                                      : colorScheme.outlineVariant
-                                          .withValues(alpha: 0.5),
-                              width: isMatched ? 2.0 : 1.0,
+                                      ? const Color(0xFF00F0FF)
+                                      : const Color(0xFF3A4465),
+                              width: isMatched || isFaceUp ? 2.5 : 2.0,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
+                                color: isMatched
+                                    ? const Color(0xFF39FF14)
+                                        .withValues(alpha: 0.3)
+                                    : Colors.black,
+                                offset: const Offset(3, 3),
+                                blurRadius: isMatched ? 6 : 0,
                               ),
                             ],
                           ),
                           alignment: Alignment.center,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            child: isFaceUp
-                                ? Text(
-                                    card.emoji,
-                                    key: ValueKey('emoji_${card.id}'),
-                                    style: const TextStyle(fontSize: 34),
-                                  )
-                                : const Text(
-                                    '❓',
-                                    key: ValueKey('hidden'),
-                                    style: TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.white38,
-                                    ),
-                                  ),
-                          ),
+                          child: isFaceUp
+                              ? PixelGlyphWidget(
+                                  type: glyph,
+                                  pixelSize: 4.5,
+                                  glow: true,
+                                )
+                              : const PixelText(
+                                  '?',
+                                  pixelSize: 3.5,
+                                  color: Color(0xFF3A4465),
+                                ),
                         ),
                       ),
                     );
@@ -208,31 +227,39 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                 ),
               ),
               const SizedBox(height: 12),
-              // Win Banner / Play Again
+
+              // Retro Victory Banner
               if (_state.isWon)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.green),
-                  ),
+                RetroPixelCard(
+                  borderColor: const Color(0xFF39FF14),
+                  backgroundColor: const Color(0xFF0A1F13),
+                  padding: const EdgeInsets.all(14),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('🎉', style: TextStyle(fontSize: 24)),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Solved in ${_state.movesCount} moves! Score: ${_state.computeScore()}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const PixelText(
+                            'STAGE CLEARED!',
+                            pixelSize: 2.2,
+                            color: Color(0xFF39FF14),
+                            glowColor: Color(0xFF39FF14),
+                          ),
+                          const SizedBox(height: 4),
+                          PixelText(
+                            'MOVES: ${_state.movesCount} • SCORE: ${_state.computeScore()}',
+                            pixelSize: 1.6,
+                            color: const Color(0xFFFFB800),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      FilledButton.tonal(
+                      RetroPixelButton(
+                        label: 'REPLAY',
                         onPressed: _startNewGame,
-                        child: const Text('Play Again'),
+                        color: const Color(0xFF39FF14),
+                        textColor: Colors.black,
+                        minWidth: 70,
                       ),
                     ],
                   ),
