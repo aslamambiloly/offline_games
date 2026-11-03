@@ -55,7 +55,7 @@ class ClickerGame extends OfflineGame {
         id: 'tap_frenzy',
         title: 'Tap Frenzy',
         description: 'Tap as fast as you can to score points!',
-        emoji: '👆',
+        glyph: PixelGlyphType.trophy,
         authors: [
           GameAuthor(name: 'Jane Doe', github: '@janedoe'),
         ],
