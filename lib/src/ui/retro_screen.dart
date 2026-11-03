@@ -306,14 +306,10 @@ class RetroCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E);
-    final border = isLight
-        ? const Color(0xFF000000)
-        : const Color(0xFF00F0FF).withValues(alpha: 0.6);
-    final xColor = isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final labelColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF8E9CB8);
+    const bg = Color(0xFFFFFFFF);
+    const border = Color(0xFF000000);
+    const xColor = Color(0xFF000000);
+    const labelColor = Color(0xFF000000);
 
     return Semantics(
       button: true,
@@ -340,11 +336,11 @@ class RetroCloseButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              PixelText(
+              const PixelText(
                 'X',
                 pixelSize: 1.6,
                 color: xColor,
-                glowColor: isLight ? null : xColor,
+                glowColor: null,
               ),
               const SizedBox(width: 6),
               PixelText(

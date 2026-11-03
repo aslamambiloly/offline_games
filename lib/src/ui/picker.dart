@@ -54,30 +54,19 @@ class _GamePickerState extends State<GamePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final headerColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final cardBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF2C3552);
-    final cardBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0E111E);
-    final iconBg = isLight ? const Color(0xFFF3F4F6) : const Color(0xFF161A2B);
-    final iconBorder = isLight
-        ? const Color(0xFF000000)
-        : const Color(0xFF00F0FF).withValues(alpha: 0.5);
-    final titleColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final readyColor =
-        isLight ? const Color(0xFF4B5563) : const Color(0xFF00F0FF);
-    final hiBg = isLight ? const Color(0xFFFEF3C7) : const Color(0xFF1A1F30);
-    final hiBorder = isLight
-        ? const Color(0xFFD97706)
-        : const Color(0xFFFFB800).withValues(alpha: 0.6);
-    final hiColor = isLight ? const Color(0xFFB45309) : const Color(0xFFFFB800);
-    final playBtnBg =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final playBtnBorder =
-        isLight ? const Color(0xFF000000) : Colors.white;
-    final playBtnColor = isLight ? Colors.white : Colors.black;
+    const headerColor = Color(0xFF000000);
+    const cardBorder = Color(0xFF000000);
+    const cardBg = Color(0xFFFFFFFF);
+    const iconBg = Color(0xFFF3F4F6);
+    const iconBorder = Color(0xFF000000);
+    const titleColor = Color(0xFF16A34A);
+    const readyColor = Color(0xFF4B5563);
+    const hiBg = Color(0xFFFEF3C7);
+    const hiBorder = Color(0xFFD97706);
+    const hiColor = Color(0xFFB45309);
+    const playBtnBg = Color(0xFF000000);
+    const playBtnBorder = Color(0xFF000000);
+    const playBtnColor = Colors.white;
 
     return Center(
       child: ConstrainedBox(
@@ -87,14 +76,14 @@ class _GamePickerState extends State<GamePicker> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
                 child: Center(
                   child: PixelText(
                     'ARCADE GAMES',
                     pixelSize: 2.2,
                     color: headerColor,
-                    glowColor: isLight ? null : headerColor,
+                    glowColor: null,
                   ),
                 ),
               ),
@@ -142,10 +131,8 @@ class _GamePickerState extends State<GamePicker> {
                                     child: PixelGlyphWidget(
                                       type: game.meta.effectiveGlyph,
                                       pixelSize: 2.8,
-                                      glow: !isLight,
-                                      color: isLight
-                                          ? const Color(0xFF000000)
-                                          : null,
+                                      glow: false,
+                                      color: null,
                                     ),
                                   ),
                                   const Spacer(),
@@ -173,14 +160,14 @@ class _GamePickerState extends State<GamePicker> {
                                 game.meta.title,
                                 pixelSize: 1.8,
                                 color: titleColor,
-                                glowColor: isLight ? null : titleColor,
+                                glowColor: null,
                               ),
                               const SizedBox(height: 6),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  PixelText(
+                                  const PixelText(
                                     'READY',
                                     pixelSize: 1.2,
                                     color: readyColor,
@@ -195,7 +182,7 @@ class _GamePickerState extends State<GamePicker> {
                                         width: 1,
                                       ),
                                     ),
-                                    child: PixelText(
+                                    child: const PixelText(
                                       '>',
                                       pixelSize: 1.4,
                                       color: playBtnColor,
