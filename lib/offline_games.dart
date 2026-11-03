@@ -16,4 +16,7 @@ export 'src/host/show_offline_games.dart';
 export 'src/storage/memory_score_store.dart';
 export 'src/storage/score_store.dart';
 export 'src/ui/credits_sheet.dart';
+export 'src/ui/picker.dart';
+export 'src/ui/player.dart';
+export 'src/ui/spinner.dart';
 export 'src/ui/theme.dart';

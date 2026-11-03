@@ -10,6 +10,8 @@ import '../storage/memory_score_store.dart';
 import '../storage/score_store.dart';
 import '../ui/game_frame.dart';
 import '../ui/offer_card.dart';
+import '../ui/picker.dart';
+import '../ui/spinner.dart';
 import '../ui/theme.dart';
 import 'offline_episode.dart';
 import 'offline_games_controller.dart';
@@ -79,6 +81,7 @@ class _OfflineGamesState extends State<OfflineGames>
 
   final ValueNotifier<bool> _pausedNotifier = ValueNotifier<bool>(false);
   OfflineGame? _activeGame;
+  OfflineGame? _lastPlayedGame;
   int? _activeBestScore;
   bool _isManualOpen = false;
 
@@ -168,7 +171,7 @@ class _OfflineGamesState extends State<OfflineGames>
     if (controller.isOpen != _isManualOpen) {
       setState(() {
         _isManualOpen = controller.isOpen;
-        if (_isManualOpen && _activeGame == null) {
+        if (_isManualOpen && _activeGame == null && widget.mode is SingleMode) {
           _selectAndStartGame();
         }
       });
@@ -181,14 +184,18 @@ class _OfflineGamesState extends State<OfflineGames>
     }
     if (widget.controller?.isOpen == true) {
       _isManualOpen = true;
-      _selectAndStartGame();
+      if (widget.mode is SingleMode) {
+        _selectAndStartGame();
+      }
     }
   }
 
   void _onEpisodeStateChanged(OfflineEpisodeState state) {
     if (!mounted) return;
     setState(() {
-      if (state == OfflineEpisodeState.playing && _activeGame == null) {
+      if (state == OfflineEpisodeState.playing &&
+          _activeGame == null &&
+          widget.mode is SingleMode) {
         _selectAndStartGame();
       }
     });
@@ -198,6 +205,7 @@ class _OfflineGamesState extends State<OfflineGames>
     final game = chosenGame ?? _resolveInitialGame();
     if (game != null) {
       _activeGame = game;
+      _lastPlayedGame = game;
       _loadBestScore(game.meta.id);
     }
   }
@@ -206,9 +214,6 @@ class _OfflineGamesState extends State<OfflineGames>
     final mode = widget.mode;
     if (mode is SingleMode) {
       return mode.game;
-    }
-    if (_effectiveGames.isNotEmpty) {
-      return _effectiveGames[_random.nextInt(_effectiveGames.length)];
     }
     return null;
   }
@@ -233,6 +238,17 @@ class _OfflineGamesState extends State<OfflineGames>
     }
   }
 
+  void _handleGameFrameExit() {
+    if (widget.mode is SingleMode) {
+      _handleExit();
+    } else {
+      setState(() {
+        _activeGame = null;
+        _activeBestScore = null;
+      });
+    }
+  }
+
   void _handleExit() {
     setState(() {
       _isManualOpen = false;
@@ -244,7 +260,9 @@ class _OfflineGamesState extends State<OfflineGames>
   }
 
   void _handlePlayPressed() {
-    _selectAndStartGame();
+    if (widget.mode is SingleMode) {
+      _selectAndStartGame();
+    }
     _episode.userAcceptedOffer();
   }
 
@@ -268,15 +286,15 @@ class _OfflineGamesState extends State<OfflineGames>
         _episode.state == OfflineEpisodeState.offered &&
         !_isOverlayActive;
 
-    final isPlaying = _isOverlayActive && _activeGame != null;
+    final isPlayingGame = _isOverlayActive && _activeGame != null;
 
-    final session = isPlaying
+    final session = isPlayingGame
         ? GameSession(
             bestScore: _activeBestScore,
             paused: _pausedNotifier,
             random: _random,
             reportScore: _handleReportScore,
-            exit: _handleExit,
+            exit: _handleGameFrameExit,
           )
         : null;
 
@@ -301,20 +319,86 @@ class _OfflineGamesState extends State<OfflineGames>
                 ),
               ),
             ),
-          if (isPlaying && session != null)
+          if (_isOverlayActive)
             Positioned.fill(
               child: HeroControllerScope.none(
                 child: Navigator(
                   onGenerateRoute: (settings) {
                     return PageRouteBuilder<void>(
-                      pageBuilder: (context, _, __) => GameFrame(
-                        game: _activeGame!,
-                        session: session,
-                        isBackOnline:
-                            _episode.state == OfflineEpisodeState.playingOnline,
-                        onKeepPlaying: _episode.userChoseKeepPlaying,
-                        onBackToApp: _handleExit,
-                      ),
+                      pageBuilder: (context, _, __) {
+                        if (isPlayingGame && session != null) {
+                          return GameFrame(
+                            game: _activeGame!,
+                            session: session,
+                            isBackOnline: _episode.state ==
+                                OfflineEpisodeState.playingOnline,
+                            onKeepPlaying: _episode.userChoseKeepPlaying,
+                            onBackToApp: _handleExit,
+                          );
+                        }
+
+                        if (widget.mode is PickerMode) {
+                          return Material(
+                            color: effectiveTheme.cardColor,
+                            child: SafeArea(
+                              child: Stack(
+                                children: [
+                                  GamePicker(
+                                    games: _effectiveGames,
+                                    scoreStore: _scoreStore,
+                                    onSelected: (game) {
+                                      setState(() {
+                                        _selectAndStartGame(game);
+                                      });
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    left: 8,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.close_rounded),
+                                      tooltip: 'Close',
+                                      onPressed: _handleExit,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Default / SpinMode
+                        return Material(
+                          color: effectiveTheme.cardColor,
+                          child: SafeArea(
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: GameSpinner(
+                                    games: _effectiveGames,
+                                    random: _random,
+                                    previousGame: _lastPlayedGame,
+                                    onResult: (game) {
+                                      setState(() {
+                                        _selectAndStartGame(game);
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  left: 8,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.close_rounded),
+                                    tooltip: 'Close',
+                                    onPressed: _handleExit,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
