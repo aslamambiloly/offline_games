@@ -1,6 +1,6 @@
 # offline_games
 
-A plug-and-play mini arcade for Flutter apps when the device goes offline. Zero configuration, zero heavy game engines, and full creator attribution.
+A plug-and-play mini arcade for Flutter apps when the device goes offline. Zero configuration, zero heavy game engines (< 120 KB package), and full creator attribution.
 
 [![pub package](https://img.shields.io/pub/v/offline_games.svg)](https://pub.dev/packages/offline_games)
 [![CI](https://github.com/aslamambiloly/offline_games/actions/workflows/ci.yaml/badge.svg)](https://github.com/aslamambiloly/offline_games/actions/workflows/ci.yaml)
@@ -18,8 +18,9 @@ Most apps greet disconnected users with an empty screen, a sad gray dinosaur, or
 - 🎰 **Spin, Picker, or Single**: Let players spin an animated lucky wheel, browse a retro-modern catalog grid, or launch a direct game.
 - 🛡️ **Never Hijacks Your App**: Non-intrusive card, shown once per offline episode, easily dismissible, and suppressible on critical screens (e.g. checkout).
 - 🏆 **Mandatory Creator Credit**: Every game proudly credits its author across the picker, spinner, and in-game frame.
-- 👾 **Vintage Pixel Vector Aesthetic**: Pure vector-rendered 5x7 typography, CRT phosphor scanlines, and 8-bit glyph sprites with zero font files (.ttf) and zero extra dependencies.
-- ⚡ **Pure Flutter & Featherweight (< 45 KB)**: Zero Flame, zero audio blobs, zero bundled binary assets. Games render crisply at any DPI using widgets and `CustomPainter`.
+- 👾 **Vintage Pixel Vector Aesthetic**: Pure vector-rendered 5x7 typography, CRT phosphor scanlines, and 8-bit glyph sprites with zero font files (`.ttf`) and zero extra dependencies.
+- ⚡ **Pure Flutter & Featherweight (< 120 KB)**: Zero Flame, zero audio blobs, zero bundled binary assets. Games render crisply at any DPI using widgets and `CustomPainter`.
+- 🤖 **AI-Agent Ready**: Includes [`llms.txt`](llms.txt) for effortless integration and game development by AI coding assistants (Copilot, Cursor, Gemini, Claude).
 
 ---
 
@@ -57,7 +58,20 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-When internet connectivity drops, a sleek offer card slides in: *"You're offline. Play a quick game while you wait?"*. Tapping **Spin** launches a random game! When connection is restored, a subtle top banner appears letting the player keep playing or return to the app.
+When internet connectivity drops, a sleek offer card slides in: *"You're offline. Play a quick game while you wait?"*. Tapping **Play** launches the arcade spinner! When connection is restored, a subtle top banner appears letting the player keep playing or return to the app.
+
+---
+
+## Instant Simulator Testing (`debugForceOffline`)
+
+Need to test or style the arcade without toggling device Wi-Fi or turning on Airplane mode? Use `debugForceOffline`:
+
+```dart
+OfflineGames(
+  debugForceOffline: true, // Forces offline arcade overlay immediately
+  child: child!,
+)
+```
 
 ---
 
@@ -155,9 +169,9 @@ GamePlayer(
 
 ## Dark Mode, Light Mode & Custom Themes
 
-`OfflineGames` adapts seamlessly to dark mode and light mode out-of-the-box via `themeMode`:
-- **Dark Mode (`ThemeMode.dark`)**: Pure black (`#000000`) background with glowing neon CRT cards and vintage phosphors.
-- **Light Mode (`ThemeMode.light`)**: Pure white (`#FFFFFF`) background with crisp black retro borders and clean 8-bit typography.
+`OfflineGames` features a **balanced neo-brutalist 8-bit aesthetic** that adapts seamlessly across dark and light modes via `themeMode`:
+- **Dark Mode (`ThemeMode.dark`)**: Pure black (`#000000`) screen background with high-contrast white arcade cards, solid black borders, and authentic vibrant retro vector sprites.
+- **Light Mode (`ThemeMode.light`)**: Pure white (`#FFFFFF`) screen background with crisp neo-brutalist cards and solid black borders.
 - **System Mode (`ThemeMode.system`)**: Automatically follows device brightness (default).
 
 ```dart
@@ -172,11 +186,23 @@ You can also customize accent colors, card corners, and styles via `OfflineGames
 ```dart
 OfflineGames(
   theme: OfflineGamesTheme.dark().copyWith(
-    primaryColor: Colors.deepPurpleAccent,
+    primaryColor: const Color(0xFF16A34A),
   ),
   child: child!,
 )
 ```
+
+---
+
+## Shared Retro Primitives
+
+The package exports its complete set of vector arcade UI primitives for you to use in your own views:
+
+- **`PixelText`**: Pure vector 5x7 bitmask typography at any scale with word wrapping and optional phosphor glow. Zero font assets required.
+- **`PixelGlyphWidget`**: 8-bit vector glyphs (`alien`, `apple`, `heart`, `star`, `sword`, `trophy`, `cloud`, `coin`, `arrowUp`, etc.).
+- **`RetroPixelCard`**: Stepped hard-shadow pixel cards with solid black borders.
+- **`RetroPixelButton`**: Chunky 8-bit pushable arcade buttons with tactile press mechanics.
+- **`CrtScanlinesOverlay`**: CRT monitor overlay with subtle scanlines and radial perimeter vignette.
 
 ---
 
@@ -201,7 +227,10 @@ We welcome new mini-games from the community! Writing and adding a game takes **
 1. Check out our [< 1 Hour Contribution Guide](doc/CONTRIBUTING_GAMES.md).
 2. Copy the boilerplate from [`tool/game_template/`](tool/game_template/).
 3. Add your logic, widgets, tests, and **your name** to `meta.authors`.
-4. Open a PR — once merged, your game and author credit will ship with the package!
+4. Run `dart run tool/check_pixel_theme.dart` and `flutter test tool/check_authors.dart`.
+5. Open a PR — once merged, your game and author credit will ship with the package!
+
+See also [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`llms.txt`](llms.txt) for instructions tailored for AI pair programmers.
 
 ---
 
