@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/game_session.dart';
 import '../core/offline_game.dart';
 import 'back_online_banner.dart';
-import 'credits_sheet.dart';
+import 'retro_pixel_glyph.dart';
 import 'retro_pixel_text.dart';
 import 'retro_screen.dart';
 import 'theme.dart';
@@ -67,7 +67,6 @@ class _GameFrameState extends State<GameFrame> {
   @override
   Widget build(BuildContext context) {
     final theme = OfflineGamesTheme.of(context);
-    final primaryAuthor = widget.game.meta.authors.first.name;
 
     return Material(
       color: theme.cardColor,
@@ -110,18 +109,20 @@ class _GameFrameState extends State<GameFrame> {
                                   width: 2.0,
                                 ),
                               ),
-                              child: const Icon(
-                                Icons.arrow_back_rounded,
+                              child: const PixelGlyphWidget(
+                                type: PixelGlyphType.arrowLeft,
+                                pixelSize: 2.2,
                                 color: Color(0xFF00F0FF),
-                                size: 22,
+                                glow: true,
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          widget.game.meta.emoji,
-                          style: const TextStyle(fontSize: 22),
+                        PixelGlyphWidget(
+                          type: widget.game.meta.effectiveGlyph,
+                          pixelSize: 2.6,
+                          glow: true,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -132,51 +133,6 @@ class _GameFrameState extends State<GameFrame> {
                             glowColor: const Color(0xFF00F0FF),
                           ),
                         ),
-                        // Retro Author Attribution Chip (C7)
-                        Semantics(
-                          label: 'View credits for author $primaryAuthor',
-                          button: true,
-                          child: GestureDetector(
-                            onTap: () =>
-                                showGameCredits(context, widget.game.meta),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF161A2B),
-                                border: Border.all(
-                                  color: const Color(0xFFFFB800)
-                                      .withValues(alpha: 0.7),
-                                  width: 1.5,
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    offset: Offset(2, 2),
-                                    blurRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.person_outline,
-                                    size: 14,
-                                    color: Color(0xFFFFB800),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  PixelText(
-                                    'by $primaryAuthor',
-                                    pixelSize: 1.3,
-                                    color: const Color(0xFFFFB800),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
                         // Pause / Resume Toggle
                         ValueListenableBuilder<bool>(
                           valueListenable: widget.session.paused,
@@ -197,15 +153,28 @@ class _GameFrameState extends State<GameFrame> {
                                       width: 2.0,
                                     ),
                                   ),
-                                  child: Icon(
-                                    paused
-                                        ? Icons.play_arrow_rounded
-                                        : Icons.pause_rounded,
-                                    color: paused
-                                        ? const Color(0xFF39FF14)
-                                        : const Color(0xFFFFB800),
-                                    size: 22,
-                                  ),
+                                  child: paused
+                                      ? const PixelGlyphWidget(
+                                          type: PixelGlyphType.arrowRight,
+                                          pixelSize: 2.0,
+                                          color: Color(0xFF39FF14),
+                                        )
+                                      : Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              width: 3.5,
+                                              height: 14,
+                                              color: const Color(0xFFFFB800),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Container(
+                                              width: 3.5,
+                                              height: 14,
+                                              color: const Color(0xFFFFB800),
+                                            ),
+                                          ],
+                                        ),
                                 ),
                               ),
                             );
@@ -259,18 +228,20 @@ class _GameFrameState extends State<GameFrame> {
                 ],
               ),
 
-              // Reconnected Banner (C6 / C10)
+              // Reconnected Modal Popup Dialog (C6 / C10)
               if (widget.isBackOnline && !_promptDismissed)
-                Positioned(
-                  top: 54,
-                  left: 0,
-                  right: 0,
-                  child: BackOnlineBanner(
-                    onKeepPlaying: _handleKeepPlaying,
-                    onBackToApp: () {
-                      widget.onBackToApp?.call();
-                      widget.session.exit();
-                    },
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withValues(alpha: 0.68),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: BackOnlineBanner(
+                      onKeepPlaying: _handleKeepPlaying,
+                      onBackToApp: () {
+                        widget.onBackToApp?.call();
+                        widget.session.exit();
+                      },
+                    ),
                   ),
                 ),
             ],

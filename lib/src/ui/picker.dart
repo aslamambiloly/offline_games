@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/offline_game.dart';
 import '../storage/score_store.dart';
+import 'retro_pixel_glyph.dart';
 import 'retro_pixel_text.dart';
 import 'retro_screen.dart';
 
@@ -84,12 +85,11 @@ class _GamePickerState extends State<GamePicker> {
                   itemCount: widget.games.length,
                   itemBuilder: (context, index) {
                     final game = widget.games[index];
-                    final authorName = game.meta.authors.first.name;
                     final score = _scores[game.meta.id];
 
                     return Semantics(
                       label:
-                          'Play ${game.meta.title} by $authorName${score != null ? ', best score $score' : ''}',
+                          'Play ${game.meta.title}${score != null ? ', best score $score' : ''}',
                       button: true,
                       child: GestureDetector(
                         onTap: () => widget.onSelected(game),
@@ -115,9 +115,10 @@ class _GamePickerState extends State<GamePicker> {
                                       ),
                                     ),
                                     alignment: Alignment.center,
-                                    child: Text(
-                                      game.meta.emoji,
-                                      style: const TextStyle(fontSize: 22),
+                                    child: PixelGlyphWidget(
+                                      type: game.meta.effectiveGlyph,
+                                      pixelSize: 2.8,
+                                      glow: true,
                                     ),
                                   ),
                                   const Spacer(),
@@ -134,7 +135,7 @@ class _GamePickerState extends State<GamePicker> {
                                         ),
                                       ),
                                       child: PixelText(
-                                        '🏆 $score',
+                                        'HI: $score',
                                         pixelSize: 1.4,
                                         color: const Color(0xFFFFB800),
                                       ),
@@ -147,12 +148,6 @@ class _GamePickerState extends State<GamePicker> {
                                 pixelSize: 1.8,
                                 color: const Color(0xFF39FF14),
                                 glowColor: const Color(0xFF39FF14),
-                              ),
-                              const SizedBox(height: 4),
-                              PixelText(
-                                'by $authorName',
-                                pixelSize: 1.3,
-                                color: const Color(0xFFFFB800),
                               ),
                               const SizedBox(height: 6),
                               Row(

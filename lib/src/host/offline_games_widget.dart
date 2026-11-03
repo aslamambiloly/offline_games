@@ -11,6 +11,7 @@ import '../storage/score_store.dart';
 import '../ui/game_frame.dart';
 import '../ui/offer_card.dart';
 import '../ui/picker.dart';
+import '../ui/retro_cloud_transition.dart';
 import '../ui/spinner.dart';
 import '../ui/theme.dart';
 import 'offline_episode.dart';
@@ -35,6 +36,8 @@ class OfflineGames extends StatefulWidget {
     this.controller,
     this.theme,
     this.random,
+    this.backgroundColor,
+    this.debugForceOffline,
   });
 
   /// The root or nested widget tree of the host app.
@@ -66,6 +69,16 @@ class OfflineGames extends StatefulWidget {
 
   /// Injected random instance for deterministic tests.
   final Random? random;
+
+  /// Optional background color for the arcade screens.
+  /// Defaults to pure black ([Color(0xFF000000)]) in dark mode and pure white in light mode.
+  final Color? backgroundColor;
+
+  /// Optional simulation flag for testing/demoing without toggling network connectivity.
+  ///
+  /// If `true`, the arcade immediately simulates being offline and presents the
+  /// offer card. If `false`, acts as if online.
+  final bool? debugForceOffline;
 
   @override
   State<OfflineGames> createState() => _OfflineGamesState();
@@ -110,6 +123,17 @@ class _OfflineGamesState extends State<OfflineGames>
 
     widget.controller?.addListener(_onControllerChanged);
     _syncController();
+
+    if (widget.debugForceOffline != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (widget.debugForceOffline == true) {
+          _episode.debugForceOfflineState();
+        } else {
+          _episode.debugForceOnlineState();
+        }
+      });
+    }
   }
 
   @override
@@ -119,6 +143,14 @@ class _OfflineGamesState extends State<OfflineGames>
       oldWidget.controller?.removeListener(_onControllerChanged);
       widget.controller?.addListener(_onControllerChanged);
       _syncController();
+    }
+    if (oldWidget.debugForceOffline != widget.debugForceOffline &&
+        widget.debugForceOffline != null) {
+      if (widget.debugForceOffline == true) {
+        _episode.debugForceOfflineState();
+      } else {
+        _episode.debugForceOnlineState();
+      }
     }
   }
 
@@ -259,11 +291,20 @@ class _OfflineGamesState extends State<OfflineGames>
     _episode.userExitedGame();
   }
 
+  bool _isSweepingClouds = false;
+
   void _handlePlayPressed() {
-    if (widget.mode is SingleMode) {
-      _selectAndStartGame();
+    final disableAnim = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    if (disableAnim) {
+      if (widget.mode is SingleMode) {
+        _selectAndStartGame();
+      }
+      _episode.userAcceptedOffer();
+    } else {
+      setState(() {
+        _isSweepingClouds = true;
+      });
     }
-    _episode.userAcceptedOffer();
   }
 
   void _handleDismissOffer() {
@@ -272,15 +313,25 @@ class _OfflineGamesState extends State<OfflineGames>
 
   String _resolveActionLabel() {
     return switch (widget.mode) {
-      SingleMode() => 'Play',
       PickerMode() => 'Pick',
-      SpinMode() => 'Spin',
+      _ => 'Play',
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTheme = widget.theme ?? OfflineGamesTheme.of(context);
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final defaultBg =
+        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+    final effectiveBg = widget.backgroundColor ??
+        widget.theme?.backgroundColor ??
+        defaultBg;
+
+    final effectiveTheme =
+        (widget.theme ?? OfflineGamesTheme.of(context)).copyWith(
+      backgroundColor: effectiveBg,
+      cardColor: effectiveBg,
+    );
 
     final showOfferCard = widget.trigger == OfflineTrigger.auto &&
         _episode.state == OfflineEpisodeState.offered &&
@@ -339,7 +390,7 @@ class _OfflineGamesState extends State<OfflineGames>
 
                         if (widget.mode is PickerMode) {
                           return Material(
-                            color: effectiveTheme.cardColor,
+                            color: effectiveTheme.backgroundColor,
                             child: SafeArea(
                               child: Stack(
                                 children: [
@@ -369,7 +420,7 @@ class _OfflineGamesState extends State<OfflineGames>
 
                         // Default / SpinMode
                         return Material(
-                          color: effectiveTheme.cardColor,
+                          color: effectiveTheme.backgroundColor,
                           child: SafeArea(
                             child: Stack(
                               children: [
@@ -404,6 +455,26 @@ class _OfflineGamesState extends State<OfflineGames>
                 ),
               ),
             ),
+
+          // Clash of Clans cartoon cloud sweep overlay
+          RetroCloudSweep(
+            isSweeping: _isSweepingClouds,
+            onMidpointReached: () {
+              setState(() {
+                if (widget.mode is SingleMode) {
+                  _selectAndStartGame();
+                }
+                _episode.userAcceptedOffer();
+              });
+            },
+            onComplete: () {
+              if (mounted) {
+                setState(() {
+                  _isSweepingClouds = false;
+                });
+              }
+            },
+          ),
         ],
       ),
     );

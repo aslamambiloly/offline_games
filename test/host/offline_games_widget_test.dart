@@ -155,7 +155,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Playing Dummy Game'), findsOneWidget);
-      expect(find.text('by Tester'), findsOneWidget);
     });
 
     testWidgets('controller.open() programmatically opens game UI',
@@ -207,15 +206,16 @@ void main() {
       expect(find.text('Playing Dummy Game'), findsOneWidget);
     });
 
-    testWidgets('tapping author chip opens credits sheet', (tester) async {
+    testWidgets('showGameCredits opens credits sheet with author info',
+        (tester) async {
       await tester.pumpWidget(createTestApp());
       await tester.pumpAndSettle();
 
       controller.open();
       await tester.pumpAndSettle();
 
-      expect(find.text('by Tester'), findsOneWidget);
-      await tester.tap(find.text('by Tester'));
+      final context = tester.element(find.text('Playing Dummy Game'));
+      showGameCredits(context, const TestDummyGame().meta);
       await tester.pumpAndSettle();
 
       expect(find.text('Authors & Contributors'), findsOneWidget);
@@ -265,6 +265,55 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Playing Dummy Game'), findsOneWidget);
+    });
+
+    testWidgets('debugForceOffline: true triggers offline simulation immediately',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => OfflineGames(
+            connectivity: fakeConnectivity, // fakeConnectivity is initially online
+            debugForceOffline: true,
+            child: child!,
+          ),
+          home: const Scaffold(body: Text('Host App')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Offer card should appear without turning off network or waiting for offlineDelay!
+      expect(find.text("You're offline"), findsOneWidget);
+      expect(find.text('Play'), findsOneWidget);
+    });
+
+    testWidgets('custom backgroundColor is applied', (tester) async {
+      const customBg = Color(0xFF123456);
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => OfflineGames(
+            connectivity: fakeConnectivity,
+            backgroundColor: customBg,
+            debugForceOffline: true,
+            child: child!,
+          ),
+          home: const Scaffold(body: Text('Host App')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap Play to view arcade shell
+      await tester.tap(find.text('Play'));
+      await tester.pumpAndSettle();
+
+      final material = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(OfflineGames),
+          matching: find.byWidgetPredicate(
+            (w) => w is Material && w.color == customBg,
+          ),
+        ),
+      );
+      expect(material.color, equals(customBg));
     });
   });
 }

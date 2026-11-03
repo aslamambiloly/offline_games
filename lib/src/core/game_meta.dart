@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import '../ui/retro_pixel_glyph.dart';
 import 'author.dart';
 
 /// Metadata describing an offline game.
@@ -13,6 +14,7 @@ class GameMeta {
     this.version = '1.0.0',
     this.tags = const <String>[],
     this.iconBuilder,
+    this.glyph,
   });
 
   /// Unique identifier in `lower_snake_case`, stable forever.
@@ -38,6 +40,20 @@ class GameMeta {
 
   /// Optional custom icon widget builder.
   final Widget Function(BuildContext context)? iconBuilder;
+
+  /// Optional retro 8-bit vector pixel glyph.
+  final PixelGlyphType? glyph;
+
+  /// Resolves the effective vector pixel glyph for arcade displays.
+  PixelGlyphType get effectiveGlyph {
+    if (glyph != null) return glyph!;
+    return switch (id) {
+      'snake' => PixelGlyphType.apple,
+      'breakout' => PixelGlyphType.gamepad,
+      'memory_match' => PixelGlyphType.alien,
+      _ => PixelGlyphType.gamepad,
+    };
+  }
 
   /// Validates that this metadata strictly satisfies the package constitution rules (C7).
   void validate() {

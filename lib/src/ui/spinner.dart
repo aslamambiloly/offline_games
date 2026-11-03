@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/offline_game.dart';
+import 'retro_pixel_glyph.dart';
 import 'retro_pixel_text.dart';
 import 'retro_screen.dart';
 
@@ -149,7 +150,6 @@ class _GameSpinnerState extends State<GameSpinner>
   @override
   Widget build(BuildContext context) {
     final gameToShow = _getDisplayedGame();
-    final authorName = gameToShow.meta.authors.first.name;
 
     return Center(
       child: ConstrainedBox(
@@ -199,11 +199,12 @@ class _GameSpinnerState extends State<GameSpinner>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            gameToShow.meta.emoji,
-                            style: const TextStyle(fontSize: 48),
+                          PixelGlyphWidget(
+                            type: gameToShow.meta.effectiveGlyph,
+                            pixelSize: 5.5,
+                            glow: true,
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 10),
                           PixelText(
                             gameToShow.meta.title,
                             pixelSize: 2.2,
@@ -215,46 +216,13 @@ class _GameSpinnerState extends State<GameSpinner>
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
-
-                // Author Attribution (C7 & 6.5)
-                Center(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF161A2B),
-                      border: Border.all(
-                        color: const Color(0xFFFFB800).withValues(alpha: 0.6),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.person_outline,
-                            size: 13, color: Color(0xFFFFB800)),
-                        const SizedBox(width: 4),
-                        PixelText(
-                          'by $authorName',
-                          pixelSize: 1.4,
-                          color: const Color(0xFFFFB800),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 if (gameToShow.meta.description.isNotEmpty) ...[
-                  const SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 14),
+                  PixelText(
                     gameToShow.meta.description,
                     textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF8E9CB8),
-                    ),
+                    pixelSize: 1.3,
+                    color: const Color(0xFF8E9CB8),
                   ),
                 ],
                 const SizedBox(height: 22),

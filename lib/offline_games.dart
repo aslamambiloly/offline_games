@@ -21,6 +21,7 @@ export 'src/storage/score_store.dart';
 export 'src/ui/credits_sheet.dart';
 export 'src/ui/picker.dart';
 export 'src/ui/player.dart';
+export 'src/ui/retro_cloud_transition.dart';
 export 'src/ui/retro_pixel_glyph.dart';
 export 'src/ui/retro_pixel_text.dart';
 export 'src/ui/retro_screen.dart';

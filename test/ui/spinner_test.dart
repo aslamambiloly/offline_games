@@ -87,8 +87,8 @@ void main() {
       // Settle animations
       await tester.pumpAndSettle();
 
-      // Check author credit (C7 & 6.5)
-      expect(find.textContaining('by '), findsOneWidget);
+      // Check glyph and buttons
+      expect(find.byType(PixelGlyphWidget), findsWidgets);
       expect(find.text('Spin again'), findsOneWidget);
       expect(find.text('Start Game'), findsOneWidget);
 
@@ -119,7 +119,7 @@ void main() {
       // In zero elapsed time, result is already visible
       await tester.pump();
       expect(find.text('Alpha Game'), findsOneWidget);
-      expect(find.text('by Alice'), findsOneWidget);
+      expect(find.byType(PixelGlyphWidget), findsWidgets);
     });
 
     testWidgets('tapping Spin again picks another game', (tester) async {

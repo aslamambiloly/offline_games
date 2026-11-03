@@ -183,6 +183,22 @@ class OfflineEpisode {
     }
   }
 
+  /// Immediately forces an offline episode state for debugging or demo purposes.
+  void debugForceOfflineState() {
+    _pendingTimer?.cancel();
+    _pendingTimer = null;
+    _isOnline = false;
+    _setState(OfflineEpisodeState.offered);
+  }
+
+  /// Immediately forces an online idle state for debugging or demo purposes.
+  void debugForceOnlineState() {
+    _pendingTimer?.cancel();
+    _pendingTimer = null;
+    _isOnline = true;
+    _setState(OfflineEpisodeState.idle);
+  }
+
   /// Releases resources, active timers, and connectivity subscriptions.
   void dispose() {
     _pendingTimer?.cancel();

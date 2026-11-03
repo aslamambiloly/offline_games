@@ -127,23 +127,29 @@ class RetroPixelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border.all(
-          color: borderColor,
-          width: borderWidth,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            offset: Offset(shadowOffset, shadowOffset),
-            blurRadius: 0, // Hard stepped retro shadow
+    return Material(
+      type: MaterialType.transparency,
+      child: DefaultTextStyle.merge(
+        style: const TextStyle(decoration: TextDecoration.none),
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            border: Border.all(
+              color: borderColor,
+              width: borderWidth,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor,
+                offset: Offset(shadowOffset, shadowOffset),
+                blurRadius: 0, // Hard stepped retro shadow
+              ),
+            ],
           ),
-        ],
+          padding: padding,
+          child: child,
+        ),
       ),
-      padding: padding,
-      child: child,
     );
   }
 }

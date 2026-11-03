@@ -43,7 +43,7 @@ void main() {
   );
 
   group('GamePicker', () {
-    testWidgets('renders all games and shows author on each card (C7 & 6.5)',
+    testWidgets('renders all games and pixel glyph cards',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -59,10 +59,7 @@ void main() {
 
       expect(find.text('Tic Tac Toe'), findsOneWidget);
       expect(find.text('Memory Match'), findsOneWidget);
-      expect(find.text('by Alice'), findsOneWidget);
-      expect(find.text('by Bob'), findsOneWidget);
-      expect(find.text('❌'), findsOneWidget);
-      expect(find.text('🃏'), findsOneWidget);
+      expect(find.byType(PixelGlyphWidget), findsNWidgets(2));
     });
 
     testWidgets('tapping a game card triggers onSelected callback',
@@ -104,7 +101,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('🏆 42'), findsOneWidget);
+      expect(find.text('HI: 42'), findsOneWidget);
     });
   });
 }
