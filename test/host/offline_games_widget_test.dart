@@ -315,5 +315,93 @@ void main() {
       );
       expect(material.color, equals(customBg));
     });
+
+    testWidgets('themeMode: ThemeMode.dark defaults to pure black #000000',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => OfflineGames(
+            connectivity: fakeConnectivity,
+            themeMode: ThemeMode.dark,
+            debugForceOffline: true,
+            child: child!,
+          ),
+          home: const Scaffold(body: Text('Host App')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Play'));
+      await tester.pumpAndSettle();
+
+      final material = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(OfflineGames),
+          matching: find.byWidgetPredicate(
+            (w) => w is Material && w.color == const Color(0xFF000000),
+          ),
+        ),
+      );
+      expect(material.color, equals(const Color(0xFF000000)));
+    });
+
+    testWidgets('themeMode: ThemeMode.light defaults to pure white #FFFFFF',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => OfflineGames(
+            connectivity: fakeConnectivity,
+            themeMode: ThemeMode.light,
+            debugForceOffline: true,
+            child: child!,
+          ),
+          home: const Scaffold(body: Text('Host App')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Play'));
+      await tester.pumpAndSettle();
+
+      final material = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(OfflineGames),
+          matching: find.byWidgetPredicate(
+            (w) => w is Material && w.color == const Color(0xFFFFFFFF),
+          ),
+        ),
+      );
+      expect(material.color, equals(const Color(0xFFFFFFFF)));
+    });
+
+    testWidgets(
+        'tapping Play anyway when network restored opens arcade via cloud sweep',
+        (tester) async {
+      await tester.pumpWidget(createTestApp());
+      await tester.pumpAndSettle();
+
+      // Go offline
+      fakeConnectivity.emit(false);
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+
+      expect(find.text('SIGNAL LOST IN TIME'), findsOneWidget);
+
+      // Reconnect network
+      fakeConnectivity.emit(true);
+      await tester.pumpAndSettle();
+
+      // Should show restored prompt
+      expect(find.text('TIMELINE RESTORED!'), findsOneWidget);
+      expect(find.text('Play anyway'), findsOneWidget);
+
+      // Tap Play anyway
+      await tester.tap(find.text('Play anyway'));
+      // Advance cloud animation and transition
+      await tester.pumpAndSettle();
+
+      // Must have successfully launched arcade and opened game!
+      expect(find.text('Playing Dummy Game'), findsOneWidget);
+    });
   });
 }

@@ -9,12 +9,14 @@ class BreakoutPainter extends CustomPainter {
     this.primaryColor = const Color(0xFF00F0FF),
     this.ballColor = const Color(0xFFFFFFFF),
     this.ballGlowColor = const Color(0xFF00F0FF),
+    this.gridColor = const Color(0xFF131728),
   });
 
   final BreakoutState state;
   final Color primaryColor;
   final Color ballColor;
   final Color ballGlowColor;
+  final Color gridColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -49,7 +51,7 @@ class BreakoutPainter extends CustomPainter {
 
   void _drawBackgroundGrid(Canvas canvas) {
     final gridPaint = Paint()
-      ..color = const Color(0xFF131728)
+      ..color = gridColor
       ..strokeWidth = 1.0;
 
     const step = 20.0;

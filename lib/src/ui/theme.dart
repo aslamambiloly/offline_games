@@ -28,6 +28,50 @@ class OfflineGamesTheme extends ThemeExtension<OfflineGamesTheme> {
   /// Optional vibrant arcade gradient.
   final Gradient? accentGradient;
 
+  /// Factory constructor for the authentic dark Vintage Pixel Vector theme.
+  factory OfflineGamesTheme.dark({
+    Color? primaryColor,
+    Color? cardColor,
+    Color? backgroundColor,
+    BorderRadius? borderRadius,
+    Gradient? accentGradient,
+  }) {
+    return OfflineGamesTheme(
+      primaryColor: primaryColor ?? const Color(0xFF00F0FF),
+      cardColor: cardColor ?? const Color(0xFF000000),
+      backgroundColor: backgroundColor ?? const Color(0xFF000000),
+      borderRadius: borderRadius ?? const BorderRadius.all(Radius.circular(4)),
+      accentGradient: accentGradient ??
+          const LinearGradient(
+            colors: [Color(0xFF00F0FF), Color(0xFF39FF14)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+    );
+  }
+
+  /// Factory constructor for the authentic light Vintage Pixel Vector theme.
+  factory OfflineGamesTheme.light({
+    Color? primaryColor,
+    Color? cardColor,
+    Color? backgroundColor,
+    BorderRadius? borderRadius,
+    Gradient? accentGradient,
+  }) {
+    return OfflineGamesTheme(
+      primaryColor: primaryColor ?? const Color(0xFF000000),
+      cardColor: cardColor ?? const Color(0xFFFFFFFF),
+      backgroundColor: backgroundColor ?? const Color(0xFFFFFFFF),
+      borderRadius: borderRadius ?? const BorderRadius.all(Radius.circular(4)),
+      accentGradient: accentGradient ??
+          const LinearGradient(
+            colors: [Color(0xFF000000), Color(0xFF00A859)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+    );
+  }
+
   /// Resolves the effective [OfflineGamesTheme] from the ambient [BuildContext].
   static OfflineGamesTheme of(BuildContext context) {
     final extension = Theme.of(context).extension<OfflineGamesTheme>();

@@ -26,6 +26,12 @@ class CrtScanlinesOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final effectiveScanline =
+        isLight ? (scanlineOpacity * 0.25) : scanlineOpacity;
+    final effectiveVignette =
+        isLight ? (vignetteOpacity * 0.25) : vignetteOpacity;
+
     return Stack(
       fit: StackFit.passthrough,
       children: [
@@ -34,8 +40,8 @@ class CrtScanlinesOverlay extends StatelessWidget {
           child: IgnorePointer(
             child: CustomPaint(
               painter: _CrtScanlinesPainter(
-                scanlineOpacity: scanlineOpacity,
-                vignetteOpacity: vignetteOpacity,
+                scanlineOpacity: effectiveScanline,
+                vignetteOpacity: effectiveVignette,
               ),
             ),
           ),
@@ -96,9 +102,9 @@ class RetroPixelCard extends StatelessWidget {
   const RetroPixelCard({
     super.key,
     required this.child,
-    this.borderColor = const Color(0xFF3B4468),
-    this.backgroundColor = const Color(0xFF0F121E),
-    this.shadowColor = Colors.black,
+    this.borderColor,
+    this.backgroundColor,
+    this.shadowColor,
     this.borderWidth = 3.0,
     this.shadowOffset = 4.0,
     this.padding = const EdgeInsets.all(16.0),
@@ -107,14 +113,14 @@ class RetroPixelCard extends StatelessWidget {
   /// The child inside the card.
   final Widget child;
 
-  /// Outline border color.
-  final Color borderColor;
+  /// Outline border color. Defaults to black in light mode and cyan/slate in dark mode.
+  final Color? borderColor;
 
-  /// Background fill color.
-  final Color backgroundColor;
+  /// Background fill color. Defaults to pure white in light mode and dark navy in dark mode.
+  final Color? backgroundColor;
 
-  /// Color of the hard stepped pixel drop shadow.
-  final Color shadowColor;
+  /// Color of the hard stepped pixel drop shadow. Defaults to black.
+  final Color? shadowColor;
 
   /// Thickness of the card border.
   final double borderWidth;
@@ -127,20 +133,27 @@ class RetroPixelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final effectiveBg = backgroundColor ??
+        (isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E));
+    final effectiveBorder = borderColor ??
+        (isLight ? const Color(0xFF000000) : const Color(0xFF3B4468));
+    final effectiveShadow = shadowColor ?? Colors.black;
+
     return Material(
       type: MaterialType.transparency,
       child: DefaultTextStyle.merge(
         style: const TextStyle(decoration: TextDecoration.none),
         child: Container(
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: effectiveBg,
             border: Border.all(
-              color: borderColor,
+              color: effectiveBorder,
               width: borderWidth,
             ),
             boxShadow: [
               BoxShadow(
-                color: shadowColor,
+                color: effectiveShadow,
                 offset: Offset(shadowOffset, shadowOffset),
                 blurRadius: 0, // Hard stepped retro shadow
               ),
@@ -161,8 +174,8 @@ class RetroPixelButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.color = const Color(0xFF00F0FF),
-    this.textColor = const Color(0xFF0F121E),
+    this.color,
+    this.textColor,
     this.pixelSize = 2.0,
     this.padding = const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
     this.minWidth = 100.0,
@@ -175,11 +188,11 @@ class RetroPixelButton extends StatefulWidget {
   /// Callback when pressed.
   final VoidCallback? onPressed;
 
-  /// Button face color.
-  final Color color;
+  /// Button face color. Defaults to solid black in light mode and cyan in dark mode.
+  final Color? color;
 
-  /// Text color.
-  final Color textColor;
+  /// Text color. Defaults to pure white in light mode and dark navy in dark mode.
+  final Color? textColor;
 
   /// Pixel size for the label.
   final double pixelSize;
@@ -202,9 +215,17 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final defaultBg =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final defaultText =
+        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E);
+    final buttonColor = widget.color ?? defaultBg;
+    final textCol = widget.textColor ?? defaultText;
+
     final isEnabled = widget.onPressed != null;
     final effectiveColor =
-        isEnabled ? widget.color : widget.color.withValues(alpha: 0.3);
+        isEnabled ? buttonColor : buttonColor.withValues(alpha: 0.3);
     const border = 3.0;
     const shadowDepth = 4.0;
 
@@ -233,7 +254,9 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
           decoration: BoxDecoration(
             color: effectiveColor,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: isLight
+                  ? const Color(0xFF000000)
+                  : Colors.white.withValues(alpha: 0.6),
               width: border,
             ),
             boxShadow: [
@@ -251,7 +274,7 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
             child: PixelText(
               widget.label,
               pixelSize: widget.pixelSize,
-              color: widget.textColor,
+              color: textCol,
             ),
           ),
         ),
@@ -277,6 +300,15 @@ class RetroCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final bg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E);
+    final border = isLight
+        ? const Color(0xFF000000)
+        : const Color(0xFF00F0FF).withValues(alpha: 0.6);
+    final xColor = isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final labelColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF8E9CB8);
+
     return Semantics(
       button: true,
       label: label,
@@ -286,9 +318,9 @@ class RetroCloseButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F121E),
+            color: bg,
             border: Border.all(
-              color: const Color(0xFF00F0FF).withValues(alpha: 0.6),
+              color: border,
               width: 2.0,
             ),
             boxShadow: const [
@@ -302,17 +334,17 @@ class RetroCloseButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const PixelText(
+              PixelText(
                 'X',
                 pixelSize: 1.6,
-                color: Color(0xFF00F0FF),
-                glowColor: Color(0xFF00F0FF),
+                color: xColor,
+                glowColor: isLight ? null : xColor,
               ),
               const SizedBox(width: 6),
               PixelText(
                 label,
                 pixelSize: 1.4,
-                color: const Color(0xFF8E9CB8),
+                color: labelColor,
               ),
             ],
           ),

@@ -129,8 +129,11 @@ class OfflineEpisode {
 
   /// Called when the user taps Spin or Play from the offer card.
   void userAcceptedOffer() {
-    if (_state == OfflineEpisodeState.offered) {
-      _setState(OfflineEpisodeState.playing);
+    if (_state == OfflineEpisodeState.offered ||
+        _state == OfflineEpisodeState.idle) {
+      _setState(_isOnline
+          ? OfflineEpisodeState.playingOnline
+          : OfflineEpisodeState.playing);
     }
   }
 

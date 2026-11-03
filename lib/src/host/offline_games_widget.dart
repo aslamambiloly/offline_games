@@ -38,7 +38,8 @@ class OfflineGames extends StatefulWidget {
     this.controller,
     this.theme,
     this.random,
-    this.backgroundColor,
+    this.themeMode = ThemeMode.light,
+    @Deprecated('Use themeMode instead') this.backgroundColor,
     this.debugForceOffline,
   });
 
@@ -71,6 +72,11 @@ class OfflineGames extends StatefulWidget {
 
   /// Injected random instance for deterministic tests.
   final Random? random;
+
+  /// Active theme mode (system, dark, or light).
+  ///
+  /// Defaults to [ThemeMode.system].
+  final ThemeMode themeMode;
 
   /// Optional background color for the arcade screens.
   /// Defaults to pure black ([Color(0xFF000000)]) in dark mode and pure white in light mode.
@@ -180,10 +186,15 @@ class _OfflineGamesState extends State<OfflineGames>
   @override
   Future<bool> didPopRoute() async {
     if (_isOverlayActive) {
-      _handleExit();
+      if (_activeGame != null && widget.mode is! SingleMode) {
+        _handleGameFrameExit();
+      } else {
+        _handleExit();
+      }
       return true;
     }
-    if (_episode.state == OfflineEpisodeState.offered) {
+    if (_episode.state == OfflineEpisodeState.offered ||
+        _offerCardReconnected) {
       _handleDismissOffer();
       return true;
     }
@@ -228,6 +239,7 @@ class _OfflineGamesState extends State<OfflineGames>
   bool _offerCardReconnected = false;
   OfflineGame? _pendingGameToStart;
   bool _isSweepingClouds = false;
+  bool _onlinePromptDismissed = false;
 
   void _onEpisodeStateChanged(OfflineEpisodeState state) {
     if (!mounted) return;
@@ -238,6 +250,10 @@ class _OfflineGamesState extends State<OfflineGames>
         _offerCardReconnected = true;
       }
       _lastEpisodeState = state;
+
+      if (state == OfflineEpisodeState.playingOnline) {
+        _onlinePromptDismissed = false;
+      }
 
       if (state == OfflineEpisodeState.playing &&
           _activeGame == null &&
@@ -301,6 +317,7 @@ class _OfflineGamesState extends State<OfflineGames>
       _activeGame = null;
       _activeBestScore = null;
       _offerCardReconnected = false;
+      _onlinePromptDismissed = false;
     });
     widget.controller?.close();
     _episode.userExitedGame();
@@ -310,6 +327,8 @@ class _OfflineGamesState extends State<OfflineGames>
     final disableAnim = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     if (disableAnim) {
       setState(() {
+        _isManualOpen = true;
+        _onlinePromptDismissed = true;
         if (game != null) {
           _selectAndStartGame(game);
         } else if (widget.mode is SingleMode) {
@@ -320,6 +339,8 @@ class _OfflineGamesState extends State<OfflineGames>
       });
     } else {
       setState(() {
+        _isManualOpen = true;
+        _onlinePromptDismissed = true;
         _pendingGameToStart = game;
         _isSweepingClouds = true;
       });
@@ -344,16 +365,27 @@ class _OfflineGamesState extends State<OfflineGames>
     };
   }
 
+  bool _resolveIsLight(BuildContext context) {
+    return switch (widget.themeMode) {
+      ThemeMode.light => true,
+      ThemeMode.dark => false,
+      ThemeMode.system => (MediaQuery.maybePlatformBrightnessOf(context) ??
+              Theme.of(context).brightness) ==
+          Brightness.light,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
+    final isLight = _resolveIsLight(context);
     final defaultBg =
         isLight ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
     final effectiveBg =
         widget.backgroundColor ?? widget.theme?.backgroundColor ?? defaultBg;
 
-    final effectiveTheme =
-        (widget.theme ?? OfflineGamesTheme.of(context)).copyWith(
+    final baseTheme = widget.theme ??
+        (isLight ? OfflineGamesTheme.light() : OfflineGamesTheme.dark());
+    final effectiveTheme = baseTheme.copyWith(
       backgroundColor: effectiveBg,
       cardColor: effectiveBg,
     );
@@ -377,6 +409,7 @@ class _OfflineGamesState extends State<OfflineGames>
 
     return Theme(
       data: Theme.of(context).copyWith(
+        brightness: isLight ? Brightness.light : Brightness.dark,
         extensions: [effectiveTheme],
       ),
       child: Stack(
@@ -422,8 +455,14 @@ class _OfflineGamesState extends State<OfflineGames>
                               game: _activeGame!,
                               session: session,
                               isBackOnline: _episode.state ==
-                                  OfflineEpisodeState.playingOnline,
-                              onKeepPlaying: _episode.userChoseKeepPlaying,
+                                      OfflineEpisodeState.playingOnline &&
+                                  !_onlinePromptDismissed,
+                              onKeepPlaying: () {
+                                setState(() {
+                                  _onlinePromptDismissed = true;
+                                });
+                                _episode.userChoseKeepPlaying();
+                              },
                               onBackToApp: _handleExit,
                             );
                           }
@@ -449,7 +488,8 @@ class _OfflineGamesState extends State<OfflineGames>
                                       ),
                                     ),
                                     if (_episode.state ==
-                                        OfflineEpisodeState.playingOnline)
+                                            OfflineEpisodeState.playingOnline &&
+                                        !_onlinePromptDismissed)
                                       Positioned.fill(
                                         child: Container(
                                           color: Colors.black
@@ -458,8 +498,12 @@ class _OfflineGamesState extends State<OfflineGames>
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 20),
                                           child: BackOnlineBanner(
-                                            onKeepPlaying:
-                                                _episode.userChoseKeepPlaying,
+                                            onKeepPlaying: () {
+                                              setState(() {
+                                                _onlinePromptDismissed = true;
+                                              });
+                                              _episode.userChoseKeepPlaying();
+                                            },
                                             onBackToApp: _handleExit,
                                           ),
                                         ),
@@ -494,7 +538,8 @@ class _OfflineGamesState extends State<OfflineGames>
                                     ),
                                   ),
                                   if (_episode.state ==
-                                      OfflineEpisodeState.playingOnline)
+                                          OfflineEpisodeState.playingOnline &&
+                                      !_onlinePromptDismissed)
                                     Positioned.fill(
                                       child: Container(
                                         color: Colors.black
@@ -503,8 +548,12 @@ class _OfflineGamesState extends State<OfflineGames>
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         child: BackOnlineBanner(
-                                          onKeepPlaying:
-                                              _episode.userChoseKeepPlaying,
+                                          onKeepPlaying: () {
+                                            setState(() {
+                                              _onlinePromptDismissed = true;
+                                            });
+                                            _episode.userChoseKeepPlaying();
+                                          },
                                           onBackToApp: _handleExit,
                                         ),
                                       ),
@@ -526,6 +575,8 @@ class _OfflineGamesState extends State<OfflineGames>
             isSweeping: _isSweepingClouds,
             onMidpointReached: () {
               setState(() {
+                _isManualOpen = true;
+                _onlinePromptDismissed = true;
                 if (_pendingGameToStart != null) {
                   _selectAndStartGame(_pendingGameToStart);
                   _pendingGameToStart = null;

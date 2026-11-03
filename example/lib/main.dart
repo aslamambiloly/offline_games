@@ -48,6 +48,7 @@ class _OfflineGamesDemoAppState extends State<OfflineGamesDemoApp> {
       SimulatedConnectivitySource();
   final OfflineGamesController _controller = OfflineGamesController();
   GamesMode _mode = const GamesMode.spin();
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   void dispose() {
@@ -60,6 +61,7 @@ class _OfflineGamesDemoAppState extends State<OfflineGamesDemoApp> {
     return MaterialApp(
       title: 'Offline Games Arcade Demo',
       debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF6C5CE7),
@@ -79,6 +81,7 @@ class _OfflineGamesDemoAppState extends State<OfflineGamesDemoApp> {
         connectivity: _connectivity,
         controller: _controller,
         mode: _mode,
+        themeMode: _themeMode,
         offlineDelay: const Duration(seconds: 1), // Fast 1s delay for demo
         child: child!,
       ),
@@ -86,7 +89,9 @@ class _OfflineGamesDemoAppState extends State<OfflineGamesDemoApp> {
         connectivity: _connectivity,
         controller: _controller,
         currentMode: _mode,
+        currentThemeMode: _themeMode,
         onModeChanged: (mode) => setState(() => _mode = mode),
+        onThemeModeChanged: (mode) => setState(() => _themeMode = mode),
       ),
     );
   }
@@ -96,14 +101,18 @@ class DemoHomeScreen extends StatefulWidget {
   final SimulatedConnectivitySource connectivity;
   final OfflineGamesController controller;
   final GamesMode currentMode;
+  final ThemeMode currentThemeMode;
   final ValueChanged<GamesMode> onModeChanged;
+  final ValueChanged<ThemeMode> onThemeModeChanged;
 
   const DemoHomeScreen({
     super.key,
     required this.connectivity,
     required this.controller,
     required this.currentMode,
+    required this.currentThemeMode,
     required this.onModeChanged,
+    required this.onThemeModeChanged,
   });
 
   @override
@@ -133,6 +142,7 @@ class _DemoHomeScreenState extends State<DemoHomeScreen> {
     showOfflineGames(
       context,
       mode: widget.currentMode,
+      themeMode: widget.currentThemeMode,
     );
   }
 
@@ -148,6 +158,47 @@ class _DemoHomeScreenState extends State<DemoHomeScreen> {
           ],
         ),
         actions: [
+          PopupMenuButton<ThemeMode>(
+            tooltip: 'Theme Mode',
+            icon: Icon(switch (widget.currentThemeMode) {
+              ThemeMode.system => Icons.brightness_auto_rounded,
+              ThemeMode.light => Icons.light_mode_rounded,
+              ThemeMode.dark => Icons.dark_mode_rounded,
+            }),
+            onSelected: widget.onThemeModeChanged,
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: ThemeMode.system,
+                child: Row(
+                  children: [
+                    Icon(Icons.brightness_auto_rounded),
+                    SizedBox(width: 8),
+                    Text('System Mode'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: ThemeMode.light,
+                child: Row(
+                  children: [
+                    Icon(Icons.light_mode_rounded),
+                    SizedBox(width: 8),
+                    Text('Light Mode'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: ThemeMode.dark,
+                child: Row(
+                  children: [
+                    Icon(Icons.dark_mode_rounded),
+                    SizedBox(width: 8),
+                    Text('Dark Mode'),
+                  ],
+                ),
+              ),
+            ],
+          ),
           IconButton(
             tooltip: 'Manual Open',
             icon: const Icon(Icons.videogame_asset_rounded),

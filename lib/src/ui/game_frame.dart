@@ -67,30 +67,47 @@ class _GameFrameState extends State<GameFrame> {
   @override
   Widget build(BuildContext context) {
     final theme = OfflineGamesTheme.of(context);
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final topBarBg =
+        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF090B14);
+    final topBarBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF23293D);
+    final btnBg = isLight ? const Color(0xFFF3F4F6) : const Color(0xFF161A2B);
+    final btnBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF3B4468);
+    final arrowColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final titleColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final pauseBarsColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFFFFB800);
+    final resumeArrowColor =
+        isLight ? const Color(0xFF059669) : const Color(0xFF39FF14);
 
     return Material(
       color: theme.cardColor,
       child: CrtScanlinesOverlay(
         scanlineOpacity: 0.08,
         vignetteOpacity: 0.35,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // Retro CRT Top Bar
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF090B14),
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Color(0xFF23293D),
-                          width: 2.0,
-                        ),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                // Retro CRT Top Bar
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: topBarBg,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: topBarBorder,
+                        width: 2.0,
                       ),
                     ),
+                  ),
+                  child: SafeArea(
+                    bottom: false,
                     child: Row(
                       children: [
                         Semantics(
@@ -103,17 +120,17 @@ class _GameFrameState extends State<GameFrame> {
                               height: 44,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF161A2B),
+                                color: btnBg,
                                 border: Border.all(
-                                  color: const Color(0xFF3B4468),
+                                  color: btnBorder,
                                   width: 2.0,
                                 ),
                               ),
-                              child: const PixelGlyphWidget(
+                              child: PixelGlyphWidget(
                                 type: PixelGlyphType.arrowLeft,
                                 pixelSize: 2.2,
-                                color: Color(0xFF00F0FF),
-                                glow: true,
+                                color: arrowColor,
+                                glow: !isLight,
                               ),
                             ),
                           ),
@@ -122,15 +139,16 @@ class _GameFrameState extends State<GameFrame> {
                         PixelGlyphWidget(
                           type: widget.game.meta.effectiveGlyph,
                           pixelSize: 2.6,
-                          glow: true,
+                          glow: !isLight,
+                          color: isLight ? const Color(0xFF000000) : null,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: PixelText(
                             widget.game.meta.title,
                             pixelSize: 2.0,
-                            color: const Color(0xFF00F0FF),
-                            glowColor: const Color(0xFF00F0FF),
+                            color: titleColor,
+                            glowColor: isLight ? null : titleColor,
                           ),
                         ),
                         // Pause / Resume Toggle
@@ -147,17 +165,18 @@ class _GameFrameState extends State<GameFrame> {
                                   height: 44,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF161A2B),
+                                    color: btnBg,
                                     border: Border.all(
-                                      color: const Color(0xFF3B4468),
+                                      color: btnBorder,
                                       width: 2.0,
                                     ),
                                   ),
                                   child: paused
-                                      ? const PixelGlyphWidget(
+                                      ? PixelGlyphWidget(
                                           type: PixelGlyphType.arrowRight,
                                           pixelSize: 2.0,
-                                          color: Color(0xFF39FF14),
+                                          color: resumeArrowColor,
+                                          glow: !isLight,
                                         )
                                       : Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -165,13 +184,13 @@ class _GameFrameState extends State<GameFrame> {
                                             Container(
                                               width: 3.5,
                                               height: 14,
-                                              color: const Color(0xFFFFB800),
+                                              color: pauseBarsColor,
                                             ),
                                             const SizedBox(width: 4),
                                             Container(
                                               width: 3.5,
                                               height: 14,
-                                              color: const Color(0xFFFFB800),
+                                              color: pauseBarsColor,
                                             ),
                                           ],
                                         ),
@@ -183,69 +202,80 @@ class _GameFrameState extends State<GameFrame> {
                       ],
                     ),
                   ),
+                ),
 
-                  // Game Viewport
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        RepaintBoundary(
+                // Game Viewport
+                Expanded(
+                  child: Stack(
+                    children: [
+                      SafeArea(
+                        top: false,
+                        child: RepaintBoundary(
                           child: widget.game.build(context, widget.session),
                         ),
-                        // Retro Pause Overlay
-                        ValueListenableBuilder<bool>(
-                          valueListenable: widget.session.paused,
-                          builder: (context, paused, _) {
-                            if (!paused) return const SizedBox.shrink();
-                            return GestureDetector(
-                              onTap: _togglePause,
-                              child: Container(
-                                color: Colors.black.withValues(alpha: 0.82),
-                                alignment: Alignment.center,
-                                child: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    PixelText(
-                                      'PAUSED',
-                                      pixelSize: 3.6,
-                                      color: Color(0xFFFFB800),
-                                      glowColor: Color(0xFFFFB800),
-                                    ),
-                                    SizedBox(height: 14),
-                                    PixelText(
-                                      'PRESS TO RESUME',
-                                      pixelSize: 1.8,
-                                      color: Color(0xFF8E9CB8),
-                                    ),
-                                  ],
-                                ),
+                      ),
+                      // Retro Pause Overlay
+                      ValueListenableBuilder<bool>(
+                        valueListenable: widget.session.paused,
+                        builder: (context, paused, _) {
+                          if (!paused) return const SizedBox.shrink();
+                          return GestureDetector(
+                            onTap: _togglePause,
+                            child: Container(
+                              color: isLight
+                                  ? Colors.white.withValues(alpha: 0.88)
+                                  : Colors.black.withValues(alpha: 0.82),
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  PixelText(
+                                    'PAUSED',
+                                    pixelSize: 3.6,
+                                    color: isLight
+                                        ? const Color(0xFF000000)
+                                        : const Color(0xFFFFB800),
+                                    glowColor: isLight
+                                        ? null
+                                        : const Color(0xFFFFB800),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  PixelText(
+                                    'PRESS TO RESUME',
+                                    pixelSize: 1.8,
+                                    color: isLight
+                                        ? const Color(0xFF4B5563)
+                                        : const Color(0xFF8E9CB8),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              // Reconnected Modal Popup Dialog (C6 / C10)
-              if (widget.isBackOnline && !_promptDismissed)
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withValues(alpha: 0.68),
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: BackOnlineBanner(
-                      onKeepPlaying: _handleKeepPlaying,
-                      onBackToApp: () {
-                        widget.onBackToApp?.call();
-                        widget.session.exit();
-                      },
-                    ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-            ],
-          ),
+              ],
+            ),
+
+            // Reconnected Modal Popup Dialog (C6 / C10)
+            if (widget.isBackOnline && !_promptDismissed)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.68),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: BackOnlineBanner(
+                    onKeepPlaying: _handleKeepPlaying,
+                    onBackToApp: () {
+                      widget.onBackToApp?.call();
+                      widget.session.exit();
+                    },
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

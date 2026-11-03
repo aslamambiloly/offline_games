@@ -153,18 +153,26 @@ GamePlayer(
 
 ---
 
-## Customizing Theme
+## Dark Mode, Light Mode & Custom Themes
 
-Customize accent colors, card corners, and gradients via `OfflineGamesTheme`:
+`OfflineGames` adapts seamlessly to dark mode and light mode out-of-the-box via `themeMode`:
+- **Dark Mode (`ThemeMode.dark`)**: Pure black (`#000000`) background with glowing neon CRT cards and vintage phosphors.
+- **Light Mode (`ThemeMode.light`)**: Pure white (`#FFFFFF`) background with crisp black retro borders and clean 8-bit typography.
+- **System Mode (`ThemeMode.system`)**: Automatically follows device brightness (default).
 
 ```dart
 OfflineGames(
-  theme: OfflineGamesTheme(
+  themeMode: ThemeMode.system, // ThemeMode.dark, ThemeMode.light, or ThemeMode.system
+  child: child!,
+)
+```
+
+You can also customize accent colors, card corners, and styles via `OfflineGamesTheme`:
+
+```dart
+OfflineGames(
+  theme: OfflineGamesTheme.dark().copyWith(
     primaryColor: Colors.deepPurpleAccent,
-    borderRadius: BorderRadius.circular(24),
-    accentGradient: const LinearGradient(
-      colors: [Colors.purple, Colors.pinkAccent],
-    ),
   ),
   child: child!,
 )

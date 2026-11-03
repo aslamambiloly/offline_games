@@ -20,13 +20,35 @@ class BackOnlineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final cardBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF09160E);
+    final cardBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final iconBg = isLight ? const Color(0xFFDCFCE7) : const Color(0xFF102619);
+    final iconBorder = isLight
+        ? const Color(0xFF16A34A)
+        : const Color(0xFF39FF14).withValues(alpha: 0.7);
+    final glyphColor =
+        isLight ? const Color(0xFF15803D) : const Color(0xFF39FF14);
+    final titleColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final subtitleColor =
+        isLight ? const Color(0xFF4B5563) : const Color(0xFF8E9CB8);
+    final keepBtnColor =
+        isLight ? const Color(0xFFE5E7EB) : const Color(0xFF162319);
+    final keepBtnText =
+        isLight ? const Color(0xFF111827) : const Color(0xFF8E9CB8);
+    final backBtnColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final backBtnText = isLight ? const Color(0xFFFFFFFF) : Colors.black;
+
     return Semantics(
       label: "Connection restored notification dialog. You're back online.",
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
         child: RetroPixelCard(
-          borderColor: const Color(0xFF39FF14),
-          backgroundColor: const Color(0xFF09160E),
+          borderColor: cardBorder,
+          backgroundColor: cardBg,
           shadowOffset: 4,
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -39,9 +61,9 @@ class BackOnlineBanner extends StatelessWidget {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF102619),
+                      color: iconBg,
                       border: Border.all(
-                        color: const Color(0xFF39FF14).withValues(alpha: 0.7),
+                        color: iconBorder,
                         width: 2,
                       ),
                       boxShadow: const [
@@ -53,29 +75,29 @@ class BackOnlineBanner extends StatelessWidget {
                       ],
                     ),
                     alignment: Alignment.center,
-                    child: const PixelGlyphWidget(
+                    child: PixelGlyphWidget(
                       type: PixelGlyphType.alien,
                       pixelSize: 4.5,
-                      color: Color(0xFF39FF14),
-                      glow: true,
+                      color: glyphColor,
+                      glow: !isLight,
                     ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         PixelText(
                           "You're back online!",
                           pixelSize: 2.0,
-                          color: Color(0xFF39FF14),
-                          glowColor: Color(0xFF39FF14),
+                          color: titleColor,
+                          glowColor: isLight ? null : titleColor,
                         ),
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
                         PixelText(
                           'KEEP PLAYING OR RETURN TO APP?',
                           pixelSize: 1.3,
-                          color: Color(0xFF8E9CB8),
+                          color: subtitleColor,
                         ),
                       ],
                     ),
@@ -89,8 +111,8 @@ class BackOnlineBanner extends StatelessWidget {
                   RetroPixelButton(
                     label: 'Keep playing',
                     onPressed: onKeepPlaying,
-                    color: const Color(0xFF162319),
-                    textColor: const Color(0xFF8E9CB8),
+                    color: keepBtnColor,
+                    textColor: keepBtnText,
                     pixelSize: 1.6,
                     minWidth: 110,
                   ),
@@ -98,8 +120,8 @@ class BackOnlineBanner extends StatelessWidget {
                   RetroPixelButton(
                     label: 'Back to app',
                     onPressed: onBackToApp,
-                    color: const Color(0xFF39FF14),
-                    textColor: Colors.black,
+                    color: backBtnColor,
+                    textColor: backBtnText,
                     pixelSize: 1.6,
                     minWidth: 110,
                   ),

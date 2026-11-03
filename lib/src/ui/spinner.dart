@@ -150,6 +150,28 @@ class _GameSpinnerState extends State<GameSpinner>
   @override
   Widget build(BuildContext context) {
     final gameToShow = _getDisplayedGame();
+    final isLight = Theme.of(context).brightness == Brightness.light;
+
+    final cardBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final cardBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0D101C);
+    final headerColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final viewportBg =
+        isLight ? const Color(0xFFF9FAFB) : const Color(0xFF070912);
+    final viewportBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF2C3552);
+    final titleColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final descColor =
+        isLight ? const Color(0xFF4B5563) : const Color(0xFF8E9CB8);
+    final spinBtnColor =
+        isLight ? const Color(0xFFE5E7EB) : const Color(0xFF1E2338);
+    final spinBtnText =
+        isLight ? const Color(0xFF111827) : const Color(0xFF8E9CB8);
+    final startBtnColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final startBtnText = isLight ? const Color(0xFFFFFFFF) : Colors.black;
 
     return Center(
       child: ConstrainedBox(
@@ -157,8 +179,8 @@ class _GameSpinnerState extends State<GameSpinner>
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: RetroPixelCard(
-            borderColor: const Color(0xFF00F0FF),
-            backgroundColor: const Color(0xFF0D101C),
+            borderColor: cardBorder,
+            backgroundColor: cardBg,
             shadowOffset: 4,
             padding: const EdgeInsets.all(22),
             child: Column(
@@ -166,12 +188,12 @@ class _GameSpinnerState extends State<GameSpinner>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Arcade Header
-                const Center(
+                Center(
                   child: PixelText(
                     'ARCADE SPINNER',
                     pixelSize: 2.0,
-                    color: Color(0xFF00F0FF),
-                    glowColor: Color(0xFF00F0FF),
+                    color: headerColor,
+                    glowColor: isLight ? null : headerColor,
                   ),
                 ),
                 const SizedBox(height: 18),
@@ -180,9 +202,9 @@ class _GameSpinnerState extends State<GameSpinner>
                 Container(
                   height: 140,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF070912),
+                    color: viewportBg,
                     border: Border.all(
-                      color: const Color(0xFF2C3552),
+                      color: viewportBorder,
                       width: 2.5,
                     ),
                     boxShadow: const [
@@ -202,14 +224,15 @@ class _GameSpinnerState extends State<GameSpinner>
                           PixelGlyphWidget(
                             type: gameToShow.meta.effectiveGlyph,
                             pixelSize: 5.5,
-                            glow: true,
+                            glow: !isLight,
+                            color: isLight ? const Color(0xFF000000) : null,
                           ),
                           const SizedBox(height: 10),
                           PixelText(
                             gameToShow.meta.title,
                             pixelSize: 2.2,
-                            color: const Color(0xFF39FF14),
-                            glowColor: const Color(0xFF39FF14),
+                            color: titleColor,
+                            glowColor: isLight ? null : titleColor,
                           ),
                         ],
                       ),
@@ -222,7 +245,7 @@ class _GameSpinnerState extends State<GameSpinner>
                     gameToShow.meta.description,
                     textAlign: TextAlign.center,
                     pixelSize: 1.3,
-                    color: const Color(0xFF8E9CB8),
+                    color: descColor,
                   ),
                 ],
                 const SizedBox(height: 22),
@@ -234,8 +257,8 @@ class _GameSpinnerState extends State<GameSpinner>
                       child: RetroPixelButton(
                         label: 'Spin again',
                         onPressed: _isSpinning ? null : _spin,
-                        color: const Color(0xFF1E2338),
-                        textColor: const Color(0xFF8E9CB8),
+                        color: spinBtnColor,
+                        textColor: spinBtnText,
                         pixelSize: 1.7,
                       ),
                     ),
@@ -250,8 +273,8 @@ class _GameSpinnerState extends State<GameSpinner>
                                     _selectedGame ?? _getDisplayedGame();
                                 widget.onResult(game);
                               },
-                        color: const Color(0xFF39FF14),
-                        textColor: Colors.black,
+                        color: startBtnColor,
+                        textColor: startBtnText,
                         pixelSize: 1.7,
                       ),
                     ),

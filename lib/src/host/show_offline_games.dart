@@ -21,6 +21,7 @@ Future<void> showOfflineGames(
   ScoreStore? scoreStore,
   ConnectivitySource? connectivity,
   OfflineGamesTheme? theme,
+  ThemeMode themeMode = ThemeMode.system,
 }) {
   final effectiveGames = games ?? GameCatalog.builtIn;
   final effectiveScoreStore = scoreStore ?? MemoryScoreStore();
@@ -39,6 +40,7 @@ Future<void> showOfflineGames(
             mode: mode,
             scoreStore: effectiveScoreStore,
             theme: theme,
+            themeMode: themeMode,
             trigger: OfflineTrigger.manual,
             child: const SizedBox.expand(),
           ),

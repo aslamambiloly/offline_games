@@ -54,6 +54,31 @@ class _GamePickerState extends State<GamePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final headerColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final cardBorder =
+        isLight ? const Color(0xFF000000) : const Color(0xFF2C3552);
+    final cardBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0E111E);
+    final iconBg = isLight ? const Color(0xFFF3F4F6) : const Color(0xFF161A2B);
+    final iconBorder = isLight
+        ? const Color(0xFF000000)
+        : const Color(0xFF00F0FF).withValues(alpha: 0.5);
+    final titleColor =
+        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
+    final readyColor =
+        isLight ? const Color(0xFF4B5563) : const Color(0xFF00F0FF);
+    final hiBg = isLight ? const Color(0xFFFEF3C7) : const Color(0xFF1A1F30);
+    final hiBorder = isLight
+        ? const Color(0xFFD97706)
+        : const Color(0xFFFFB800).withValues(alpha: 0.6);
+    final hiColor = isLight ? const Color(0xFFB45309) : const Color(0xFFFFB800);
+    final playBtnBg =
+        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    final playBtnBorder =
+        isLight ? const Color(0xFF000000) : Colors.white;
+    final playBtnColor = isLight ? Colors.white : Colors.black;
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
@@ -62,14 +87,14 @@ class _GamePickerState extends State<GamePicker> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Center(
                   child: PixelText(
                     'ARCADE GAMES',
                     pixelSize: 2.2,
-                    color: Color(0xFF00F0FF),
-                    glowColor: Color(0xFF00F0FF),
+                    color: headerColor,
+                    glowColor: isLight ? null : headerColor,
                   ),
                 ),
               ),
@@ -94,8 +119,8 @@ class _GamePickerState extends State<GamePicker> {
                       child: GestureDetector(
                         onTap: () => widget.onSelected(game),
                         child: RetroPixelCard(
-                          borderColor: const Color(0xFF2C3552),
-                          backgroundColor: const Color(0xFF0E111E),
+                          borderColor: cardBorder,
+                          backgroundColor: cardBg,
                           shadowOffset: 3,
                           padding: const EdgeInsets.all(14),
                           child: Column(
@@ -107,10 +132,9 @@ class _GamePickerState extends State<GamePicker> {
                                     width: 44,
                                     height: 44,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF161A2B),
+                                      color: iconBg,
                                       border: Border.all(
-                                        color: const Color(0xFF00F0FF)
-                                            .withValues(alpha: 0.5),
+                                        color: iconBorder,
                                         width: 1.5,
                                       ),
                                     ),
@@ -118,7 +142,10 @@ class _GamePickerState extends State<GamePicker> {
                                     child: PixelGlyphWidget(
                                       type: game.meta.effectiveGlyph,
                                       pixelSize: 2.8,
-                                      glow: true,
+                                      glow: !isLight,
+                                      color: isLight
+                                          ? const Color(0xFF000000)
+                                          : null,
                                     ),
                                   ),
                                   const Spacer(),
@@ -127,17 +154,16 @@ class _GamePickerState extends State<GamePicker> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 6, vertical: 3),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF1A1F30),
+                                        color: hiBg,
                                         border: Border.all(
-                                          color: const Color(0xFFFFB800)
-                                              .withValues(alpha: 0.6),
+                                          color: hiBorder,
                                           width: 1.0,
                                         ),
                                       ),
                                       child: PixelText(
                                         'HI: $score',
                                         pixelSize: 1.4,
-                                        color: const Color(0xFFFFB800),
+                                        color: hiColor,
                                       ),
                                     ),
                                 ],
@@ -146,32 +172,33 @@ class _GamePickerState extends State<GamePicker> {
                               PixelText(
                                 game.meta.title,
                                 pixelSize: 1.8,
-                                color: const Color(0xFF39FF14),
-                                glowColor: const Color(0xFF39FF14),
+                                color: titleColor,
+                                glowColor: isLight ? null : titleColor,
                               ),
                               const SizedBox(height: 6),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const PixelText(
+                                  PixelText(
                                     'READY',
                                     pixelSize: 1.2,
-                                    color: Color(0xFF00F0FF),
+                                    color: readyColor,
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.all(4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 3),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF00F0FF),
+                                      color: playBtnBg,
                                       border: Border.all(
-                                        color: Colors.white,
+                                        color: playBtnBorder,
                                         width: 1,
                                       ),
                                     ),
-                                    child: const Icon(
-                                      Icons.play_arrow_rounded,
-                                      size: 14,
-                                      color: Colors.black,
+                                    child: PixelText(
+                                      '>',
+                                      pixelSize: 1.4,
+                                      color: playBtnColor,
                                     ),
                                   ),
                                 ],
