@@ -3,22 +3,22 @@ import '../../core/author.dart';
 import '../../core/game_meta.dart';
 import '../../core/game_session.dart';
 import '../../core/offline_game.dart';
-import 'ui/tic_tac_toe_widget.dart';
+import 'ui/breakout_widget.dart';
 
-/// Offline implementation of the classic Tic Tac Toe mini-game.
-class TicTacToeGame extends OfflineGame {
-  /// Creates a [TicTacToeGame].
-  const TicTacToeGame();
+/// Offline implementation of the retro Breakout brick-breaker arcade game.
+class BreakoutGame extends OfflineGame {
+  /// Creates a [BreakoutGame].
+  const BreakoutGame();
 
   @override
   GameMeta get meta => const GameMeta(
-        id: 'tic_tac_toe',
-        title: 'Tic Tac Toe',
-        emoji: '❌',
+        id: 'breakout',
+        title: 'Breakout',
+        emoji: '🧱',
         description:
-            'Classic 3x3 grid challenge against an unbeatable minimax arcade AI.',
+            'Bounce the pixel ball to smash glowing brick walls and clear the grid.',
         version: '1.0.0',
-        tags: ['puzzle', 'strategy', 'classic'],
+        tags: ['arcade', 'retro', 'action'],
         authors: [
           GameAuthor(
             name: 'Aslam Ambiloly',
@@ -29,6 +29,6 @@ class TicTacToeGame extends OfflineGame {
 
   @override
   Widget build(BuildContext context, GameSession session) {
-    return TicTacToeWidget(session: session);
+    return BreakoutWidget(session: session);
   }
 }

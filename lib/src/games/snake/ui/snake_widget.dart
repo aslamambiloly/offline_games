@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import '../../../core/game_session.dart';
+import '../../../ui/retro_pixel_glyph.dart';
 import '../../../ui/retro_pixel_text.dart';
 import '../../../ui/retro_screen.dart';
 import '../logic/snake_state.dart';
@@ -290,7 +291,7 @@ class _DpadControls extends StatelessWidget {
     Widget buildDpadBtn({
       required Key key,
       required String label,
-      required IconData icon,
+      required PixelGlyphType glyph,
       required Direction direction,
     }) {
       return Semantics(
@@ -302,6 +303,7 @@ class _DpadControls extends StatelessWidget {
           child: Container(
             width: btnSize,
             height: btnSize,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: const Color(0xFF1E2338),
               border: Border.all(
@@ -316,10 +318,11 @@ class _DpadControls extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              icon,
+            child: PixelGlyphWidget(
+              type: glyph,
+              pixelSize: 2.5,
               color: const Color(0xFF00F0FF),
-              size: 26,
+              glow: true,
             ),
           ),
         ),
@@ -332,7 +335,7 @@ class _DpadControls extends StatelessWidget {
         buildDpadBtn(
           key: const ValueKey('dpad_up'),
           label: 'Move Up',
-          icon: Icons.keyboard_arrow_up_rounded,
+          glyph: PixelGlyphType.arrowUp,
           direction: Direction.up,
         ),
         Row(
@@ -341,14 +344,14 @@ class _DpadControls extends StatelessWidget {
             buildDpadBtn(
               key: const ValueKey('dpad_left'),
               label: 'Move Left',
-              icon: Icons.keyboard_arrow_left_rounded,
+              glyph: PixelGlyphType.arrowLeft,
               direction: Direction.left,
             ),
             const SizedBox(width: btnSize),
             buildDpadBtn(
               key: const ValueKey('dpad_right'),
               label: 'Move Right',
-              icon: Icons.keyboard_arrow_right_rounded,
+              glyph: PixelGlyphType.arrowRight,
               direction: Direction.right,
             ),
           ],
@@ -356,7 +359,7 @@ class _DpadControls extends StatelessWidget {
         buildDpadBtn(
           key: const ValueKey('dpad_down'),
           label: 'Move Down',
-          icon: Icons.keyboard_arrow_down_rounded,
+          glyph: PixelGlyphType.arrowDown,
           direction: Direction.down,
         ),
       ],
