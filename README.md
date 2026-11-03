@@ -21,23 +21,21 @@ Airplane mode, elevator rides, subway tunnels, or lost signals: users usually se
 ## Happy News : )
 
 <!-- > [!NOTE] -->
-> `offline_games` is built in **100% pure Dart & Flutter**:
-> - **Zero Heavy Engines**: No Flame, Unity, or Godot. Archive size is **< 120 KB**.
-> - **Zero Font Overhead**: No `.ttf` or `.otf` assets. Pure 5x7 vector bitmasks in code.
-> - **Zero Asset Binaries**: All sprites, scanlines, and glyphs render via Flutter `Canvas`.
-> - **Native Safe**: 100% compatible with iOS SPM and Android AGP 8/9.
+- **100% pure Dart & Flutter**:
+ - **Zero Heavy Engines**: No Flame, Unity, or Godot.
+ - **Zero Font Overhead**: No `.ttf` or `.otf` assets. 
+ - **Zero Asset Binaries**: All sprites, scanlines, and glyphs render via Flutter `Canvas`.
+ - **Native Safe**: 100% compatible with iOS SPM and Android AGP 8/9.
 
 ## Features
 
-- 🚀 **1-Line Setup**: Drop into `MaterialApp.builder` and you are done.
-- 📴 **Honest Reachability**: Real HTTP ping checks with debouncing (no false alarms).
-- 🎰 **3 Modes**: [`Spin`](#1-spin-mode-default), [`Picker`](#2-picker-catalog-mode), or [`Single Game`](#3-single-game-mode).
-- 🎮 **3 Built-in Games**: [Breakout](#built-in-games), [Memory Match](#built-in-games), and [Snake](#built-in-games).
-- 👾 **Pure Vector 8-Bit**: 5x7 typography, CRT scanlines, and pixel glyphs (zero images/fonts).
-- 🧪 **Instant Testing**: Simulate offline instantly with `debugForceOffline: true`.
-- 🌓 **Adaptive Theming**: Balanced neo-brutalist styling with automatic dark and light mode.
-- 🛡️ **Non-Intrusive**: Shows once per offline drop, easy dismiss, and suppressible on checkout.
-- 🤖 **AI-Agent Ready**: Includes [`llms.txt`](llms.txt) for Cursor, Copilot, and Claude.
+- **One Line Setup**.
+- **Honest Reachability**: Real HTTP ping checks with debouncing (no false alarms).
+- **Three Modes**: [`Spin`](#1-spin-mode-default), [`Picker`](#2-picker-catalog-mode), or [`Single Game`](#3-single-game-mode).
+- **Three Built-in Games**: [Breakout](#built-in-games), [Memory Match](#built-in-games), and [Snake](#built-in-games).
+
+- **Adaptive Theming**.
+- **AI-Agent Ready**: Includes [`llms.txt`](llms.txt) for Cursor, Copilot, and Claude.
 
 ## Table of Contents
 
