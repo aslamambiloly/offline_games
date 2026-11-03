@@ -32,7 +32,7 @@ class OfflineGames extends StatefulWidget {
     this.games,
     this.mode = const GamesMode.spin(),
     this.trigger = OfflineTrigger.auto,
-    this.offlineDelay = const Duration(seconds: 3),
+    this.offlineDelay = const Duration(seconds: 1),
     this.connectivity,
     this.scoreStore,
     this.controller,
@@ -349,9 +349,8 @@ class _OfflineGamesState extends State<OfflineGames>
     final isLight = Theme.of(context).brightness == Brightness.light;
     final defaultBg =
         isLight ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
-    final effectiveBg = widget.backgroundColor ??
-        widget.theme?.backgroundColor ??
-        defaultBg;
+    final effectiveBg =
+        widget.backgroundColor ?? widget.theme?.backgroundColor ?? defaultBg;
 
     final effectiveTheme =
         (widget.theme ?? OfflineGamesTheme.of(context)).copyWith(
@@ -429,98 +428,98 @@ class _OfflineGamesState extends State<OfflineGames>
                             );
                           }
 
-                      if (widget.mode is PickerMode) {
-                        return Material(
-                          color: effectiveTheme.backgroundColor,
-                          child: SafeArea(
-                            child: Stack(
-                              children: [
-                                GamePicker(
-                                  games: _effectiveGames,
-                                  scoreStore: _scoreStore,
-                                  onSelected: (game) {
-                                    _startCloudSweepToGame(game);
-                                  },
-                                ),
-                                Positioned(
-                                  top: 12,
-                                  left: 12,
-                                  child: RetroCloseButton(
-                                    onPressed: _handleExit,
-                                  ),
-                                ),
-                                if (_episode.state ==
-                                    OfflineEpisodeState.playingOnline)
-                                  Positioned.fill(
-                                    child: Container(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.68),
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: BackOnlineBanner(
-                                        onKeepPlaying:
-                                            _episode.userChoseKeepPlaying,
-                                        onBackToApp: _handleExit,
+                          if (widget.mode is PickerMode) {
+                            return Material(
+                              color: effectiveTheme.backgroundColor,
+                              child: SafeArea(
+                                child: Stack(
+                                  children: [
+                                    GamePicker(
+                                      games: _effectiveGames,
+                                      scoreStore: _scoreStore,
+                                      onSelected: (game) {
+                                        _startCloudSweepToGame(game);
+                                      },
+                                    ),
+                                    Positioned(
+                                      top: 12,
+                                      left: 12,
+                                      child: RetroCloseButton(
+                                        onPressed: _handleExit,
                                       ),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
+                                    if (_episode.state ==
+                                        OfflineEpisodeState.playingOnline)
+                                      Positioned.fill(
+                                        child: Container(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.68),
+                                          alignment: Alignment.center,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: BackOnlineBanner(
+                                            onKeepPlaying:
+                                                _episode.userChoseKeepPlaying,
+                                            onBackToApp: _handleExit,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
 
-                      // Default / SpinMode
-                      return Material(
-                        color: effectiveTheme.backgroundColor,
-                        child: SafeArea(
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: GameSpinner(
-                                  games: _effectiveGames,
-                                  random: _random,
-                                  previousGame: _lastPlayedGame,
-                                  onResult: (game) {
-                                    _startCloudSweepToGame(game);
-                                  },
-                                ),
-                              ),
-                              Positioned(
-                                top: 12,
-                                left: 12,
-                                child: RetroCloseButton(
-                                  onPressed: _handleExit,
-                                ),
-                              ),
-                              if (_episode.state ==
-                                  OfflineEpisodeState.playingOnline)
-                                Positioned.fill(
-                                  child: Container(
-                                    color:
-                                        Colors.black.withValues(alpha: 0.68),
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: BackOnlineBanner(
-                                      onKeepPlaying:
-                                          _episode.userChoseKeepPlaying,
-                                      onBackToApp: _handleExit,
+                          // Default / SpinMode
+                          return Material(
+                            color: effectiveTheme.backgroundColor,
+                            child: SafeArea(
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: GameSpinner(
+                                      games: _effectiveGames,
+                                      random: _random,
+                                      previousGame: _lastPlayedGame,
+                                      onResult: (game) {
+                                        _startCloudSweepToGame(game);
+                                      },
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        ),
+                                  Positioned(
+                                    top: 12,
+                                    left: 12,
+                                    child: RetroCloseButton(
+                                      onPressed: _handleExit,
+                                    ),
+                                  ),
+                                  if (_episode.state ==
+                                      OfflineEpisodeState.playingOnline)
+                                    Positioned.fill(
+                                      child: Container(
+                                        color: Colors.black
+                                            .withValues(alpha: 0.68),
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: BackOnlineBanner(
+                                          onKeepPlaying:
+                                              _episode.userChoseKeepPlaying,
+                                          onBackToApp: _handleExit,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
 
           // Clash of Clans cartoon cloud sweep overlay
           RetroCloudSweep(
