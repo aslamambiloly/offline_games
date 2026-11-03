@@ -1,4 +1,5 @@
 import '../games/memory_match/memory_match_game.dart';
+import '../games/snake/snake_game.dart';
 import '../games/tic_tac_toe/tic_tac_toe_game.dart';
 import 'offline_game.dart';
 
@@ -8,5 +9,6 @@ abstract final class GameCatalog {
   static const List<OfflineGame> builtIn = <OfflineGame>[
     TicTacToeGame(),
     MemoryMatchGame(),
+    SnakeGame(),
   ];
 }
