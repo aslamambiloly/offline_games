@@ -9,6 +9,7 @@ export 'src/core/game_meta.dart';
 export 'src/core/game_session.dart';
 export 'src/core/games_mode.dart';
 export 'src/core/offline_game.dart';
+export 'src/games/memory_match/memory_match_game.dart';
 export 'src/games/tic_tac_toe/tic_tac_toe_game.dart';
 export 'src/host/offline_games_controller.dart';
 export 'src/host/offline_games_widget.dart';
