@@ -2,6 +2,15 @@
 
 All notable changes to `offline_games` will be documented in this file.
 
+## 1.0.0
+
+- **Production Release**:
+  - Official 1.0.0 release of `offline_games`.
+  - Zero-config mini arcade with automatic reachability detection and debouncing.
+  - Three built-in games: Breakout, Memory Match, and Snake.
+  - Neo-brutalist 8-bit vector UI with zero external fonts and zero engine dependencies (< 100 KB).
+  - Standalone component APIs, themeMode support, and instant simulator testing via `debugForceOffline: true`.
+
 ## 0.1.0
 
 ### Added
@@ -17,9 +26,9 @@ All notable changes to `offline_games` will be documented in this file.
   - `GamesMode.picker()`: Modern 8-bit arcade grid catalog showcasing high scores and author credits.
   - `GamesMode.single(game)`: Directly launches a specific chosen mini-game.
 - **Three Built-in Launch Mini-Games**:
-  - 🧱 **Breakout**: Classic brick-breaker with angle deflection physics, multi-lives, rainbow brick rows, launch prompts, and touch steering.
-  - 🃏 **Memory Match**: Vintage 8-bit card pair flip matching with moves/pairs scoreboard HUD and stage cleared celebration.
-  - 🐍 **Snake**: Classic Nokia-style retro arcade snake with smooth motion, directional swipes, and tactile D-pad controls.
+  - **Breakout**: Classic brick-breaker with angle deflection physics, multi-lives, rainbow brick rows, launch prompts, and touch steering.
+  - **Memory Match**: Vintage 8-bit card pair flip matching with moves/pairs scoreboard HUD and stage cleared celebration.
+  - **Snake**: Classic Nokia-style retro arcade snake with smooth motion, directional swipes, and tactile D-pad controls.
 - **Balanced Neo-Brutalist 8-Bit Visual System**:
   - High-contrast pure white arcade cards (`#FFFFFF`) with solid 2-3px black borders (`#000000`) and hard stepped drop shadows across both dark and light modes.
   - CRT monitor atmosphere with subtle scanlines and radial perimeter vignette (`CrtScanlinesOverlay`).

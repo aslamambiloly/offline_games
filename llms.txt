@@ -2,7 +2,7 @@
 
 > A plug-and-play mini arcade for Flutter apps when the device goes offline. Zero configuration, zero heavy game engines, zero external asset overhead (< 120 KB), and full creator attribution.
 
-- **Current stable version:** `0.1.0`
+- **Current stable version:** `1.0.0`
 - **Package on pub.dev:** https://pub.dev/packages/offline_games
 - **Repository:** https://github.com/aslamambiloly/offline_games
 - **Issue Tracker:** https://github.com/aslamambiloly/offline_games/issues
@@ -29,7 +29,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  offline_games: ^0.1.0
+  offline_games: ^1.0.0
 ```
 
 Import in Dart:
