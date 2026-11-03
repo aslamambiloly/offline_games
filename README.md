@@ -58,6 +58,18 @@ GameSpinner(
 
 ---
 
+## Built-in Games
+
+<!-- GAMES_TABLE_START -->
+| Game | ID | Author | Description |
+|---|---|---|---|
+| **Tic Tac Toe** | `tic_tac_toe` | [Aslam Ambiloly](https://github.com/aslamambiloly) | Classic 3x3 grid challenge against an unbeatable minimax arcade AI. |
+| **Memory Match** | `memory_match` | [Aslam Ambiloly](https://github.com/aslamambiloly) | Flip and match emoji pairs with the fewest possible moves. |
+| **Snake** | `snake` | [Aslam Ambiloly](https://github.com/aslamambiloly) | Navigate the grid, collect apples, and grow without colliding. |
+<!-- GAMES_TABLE_END -->
+
+---
+
 ## Contributing Games
 
 Want to ship a mini-game to thousands of Flutter apps? Check out [CONTRIBUTING_GAMES.md](doc/CONTRIBUTING_GAMES.md) — you can contribute a game in under an hour!

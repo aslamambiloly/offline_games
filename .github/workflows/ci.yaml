@@ -29,6 +29,9 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      - name: Verify game authors and metadata guard
+        run: flutter test tool/check_authors.dart
+
       - name: Analyze example
         run: |
           cd example
