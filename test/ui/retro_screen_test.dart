@@ -55,5 +55,28 @@ void main() {
       expect(find.text('SCREEN CONTENT'), findsOneWidget);
       expect(find.byType(CrtScanlinesOverlay), findsOneWidget);
     });
+
+    testWidgets('RetroCloseButton renders and triggers onPressed',
+        (tester) async {
+      bool closed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: RetroCloseButton(
+                onPressed: () => closed = true,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('CLOSE'), findsOneWidget);
+      await tester.tap(find.byType(RetroCloseButton));
+      await tester.pumpAndSettle();
+
+      expect(closed, isTrue);
+    });
   });
 }

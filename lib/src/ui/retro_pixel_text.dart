@@ -15,6 +15,7 @@ class PixelText extends StatelessWidget {
     this.letterSpacing = 2.0,
     this.lineSpacing = 4.0,
     this.textAlign = TextAlign.left,
+    this.maxWidth,
   });
 
   /// The text string to render (supports uppercase A-Z, 0-9, and punctuation).
@@ -41,54 +42,150 @@ class PixelText extends StatelessWidget {
   /// Horizontal text alignment for multi-line text.
   final TextAlign textAlign;
 
+  /// Optional maximum width constraint for word-wrapping.
+  /// If null, wraps to parent's bounded width if available.
+  final double? maxWidth;
+
+  /// Splits [text] into lines wrapped according to [maxWidth] in logical pixels.
+  static List<String> wrapText({
+    required String text,
+    required double maxWidth,
+    required double pixelSize,
+    required double letterSpacing,
+  }) {
+    if (maxWidth <= 0 || !maxWidth.isFinite) {
+      return text.split('\n');
+    }
+
+    final charW = 5 * pixelSize;
+    final spaceW = charW + letterSpacing;
+    final paragraphs = text.split('\n');
+    final resultLines = <String>[];
+
+    for (final paragraph in paragraphs) {
+      if (paragraph.isEmpty) {
+        resultLines.add('');
+        continue;
+      }
+
+      final words = paragraph.split(' ');
+      var currentLine = StringBuffer();
+      var currentLineWidth = 0.0;
+
+      for (int i = 0; i < words.length; i++) {
+        final word = words[i];
+        if (word.isEmpty) continue;
+
+        final wordW = word.length * charW + (word.length - 1) * letterSpacing;
+
+        if (currentLine.isEmpty) {
+          if (wordW > maxWidth) {
+            var chunk = StringBuffer();
+            var chunkW = 0.0;
+            for (int c = 0; c < word.length; c++) {
+              final ch = word[c];
+              final chW = charW + (chunk.isEmpty ? 0.0 : letterSpacing);
+              if (chunkW + chW > maxWidth && chunk.isNotEmpty) {
+                resultLines.add(chunk.toString());
+                chunk = StringBuffer()..write(ch);
+                chunkW = charW;
+              } else {
+                chunk.write(ch);
+                chunkW += chW;
+              }
+            }
+            if (chunk.isNotEmpty) {
+              currentLine = chunk;
+              currentLineWidth = chunkW;
+            }
+          } else {
+            currentLine.write(word);
+            currentLineWidth = wordW;
+          }
+        } else {
+          final addedW = spaceW + wordW;
+          if (currentLineWidth + addedW <= maxWidth) {
+            currentLine.write(' ');
+            currentLine.write(word);
+            currentLineWidth += addedW;
+          } else {
+            resultLines.add(currentLine.toString());
+            currentLine = StringBuffer()..write(word);
+            currentLineWidth = wordW;
+          }
+        }
+      }
+
+      if (currentLine.isNotEmpty) {
+        resultLines.add(currentLine.toString());
+      }
+    }
+
+    return resultLines.isEmpty ? [''] : resultLines;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = _calculateSize();
-    return Semantics(
-      label: text,
-      container: true,
-      child: SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Transparent text for native widget testing and layout (no underlines)
-            ExcludeSemantics(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: Colors.transparent,
-                  fontSize: size.height > 0 ? size.height * 0.8 : 1,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ),
-            Positioned.fill(
-              child: IgnorePointer(
-                child: CustomPaint(
-                  painter: _PixelTextPainter(
-                    text: text.toUpperCase(),
-                    pixelSize: pixelSize,
-                    color: color,
-                    glowColor: glowColor,
-                    glowRadius: glowRadius,
-                    letterSpacing: letterSpacing,
-                    lineSpacing: lineSpacing,
-                    textAlign: textAlign,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = maxWidth ??
+            (constraints.hasBoundedWidth ? constraints.maxWidth : double.infinity);
+
+        final lines = wrapText(
+          text: text.toUpperCase(),
+          maxWidth: availableWidth,
+          pixelSize: pixelSize,
+          letterSpacing: letterSpacing,
+        );
+
+        final size = _calculateSize(lines);
+
+        return Semantics(
+          label: text,
+          container: true,
+          child: SizedBox(
+            width: size.width,
+            height: size.height,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Transparent text for native widget testing and layout (no underlines)
+                ExcludeSemantics(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: size.height > 0 ? size.height * 0.8 : 1,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
                 ),
-              ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: _PixelTextPainter(
+                        lines: lines,
+                        pixelSize: pixelSize,
+                        color: color,
+                        glowColor: glowColor,
+                        glowRadius: glowRadius,
+                        letterSpacing: letterSpacing,
+                        lineSpacing: lineSpacing,
+                        textAlign: textAlign,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Size _calculateSize() {
-    final lines = text.split('\n');
-    double maxWidth = 0;
+  Size _calculateSize(List<String> lines) {
+    double maxLineWidth = 0;
     const charWidth = 5;
     const charHeight = 7;
 
@@ -96,19 +193,19 @@ class PixelText extends StatelessWidget {
       if (line.isEmpty) continue;
       final w = line.length * (charWidth * pixelSize) +
           (line.length - 1) * letterSpacing;
-      if (w > maxWidth) maxWidth = w;
+      if (w > maxLineWidth) maxLineWidth = w;
     }
 
     final totalHeight = lines.length * (charHeight * pixelSize) +
         (lines.length - 1) * lineSpacing;
 
-    return Size(maxWidth, totalHeight);
+    return Size(maxLineWidth, totalHeight);
   }
 }
 
 class _PixelTextPainter extends CustomPainter {
   const _PixelTextPainter({
-    required this.text,
+    required this.lines,
     required this.pixelSize,
     required this.color,
     required this.glowColor,
@@ -118,7 +215,7 @@ class _PixelTextPainter extends CustomPainter {
     required this.textAlign,
   });
 
-  final String text;
+  final List<String> lines;
   final double pixelSize;
   final Color color;
   final Color? glowColor;
@@ -132,7 +229,6 @@ class _PixelTextPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final lines = text.split('\n');
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
@@ -191,7 +287,7 @@ class _PixelTextPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _PixelTextPainter old) {
-    return old.text != text ||
+    return old.lines != lines ||
         old.pixelSize != pixelSize ||
         old.color != color ||
         old.glowColor != glowColor ||

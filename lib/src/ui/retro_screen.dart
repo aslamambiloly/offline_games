@@ -259,3 +259,66 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
     );
   }
 }
+
+/// A vintage 8-bit styled retro close button displaying pixel text and frame.
+class RetroCloseButton extends StatelessWidget {
+  /// Creates a [RetroCloseButton].
+  const RetroCloseButton({
+    super.key,
+    required this.onPressed,
+    this.label = 'CLOSE',
+  });
+
+  /// Action when tapped.
+  final VoidCallback onPressed;
+
+  /// Optional label text (defaults to 'CLOSE').
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F121E),
+            border: Border.all(
+              color: const Color(0xFF00F0FF).withValues(alpha: 0.6),
+              width: 2.0,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black,
+                offset: Offset(2, 2),
+                blurRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const PixelText(
+                'X',
+                pixelSize: 1.6,
+                color: Color(0xFF00F0FF),
+                glowColor: Color(0xFF00F0FF),
+              ),
+              const SizedBox(width: 6),
+              PixelText(
+                label,
+                pixelSize: 1.4,
+                color: const Color(0xFF8E9CB8),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

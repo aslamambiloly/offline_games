@@ -101,7 +101,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Host App Content'), findsOneWidget);
-      expect(find.text("You're offline"), findsNothing);
+      expect(find.text('SIGNAL LOST IN TIME'), findsNothing);
     });
 
     testWidgets(
@@ -114,13 +114,13 @@ void main() {
       fakeConnectivity.emit(false);
       await tester.pump();
       // Should not show immediately due to delay
-      expect(find.text("You're offline"), findsNothing);
+      expect(find.text('SIGNAL LOST IN TIME'), findsNothing);
 
       // Advance clock past delay (100ms)
       await tester.pump(const Duration(milliseconds: 150));
       await tester.pumpAndSettle();
 
-      expect(find.text("You're offline"), findsOneWidget);
+      expect(find.text('SIGNAL LOST IN TIME'), findsOneWidget);
       expect(find.text('Play'), findsOneWidget);
       expect(find.text('Dismiss'), findsOneWidget);
     });
@@ -138,7 +138,7 @@ void main() {
       await tester.tap(find.text('Dismiss'));
       await tester.pumpAndSettle();
 
-      expect(find.text("You're offline"), findsNothing);
+      expect(find.text('SIGNAL LOST IN TIME'), findsNothing);
       expect(find.text('Host App Content'), findsOneWidget);
     });
 
@@ -282,7 +282,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Offer card should appear without turning off network or waiting for offlineDelay!
-      expect(find.text("You're offline"), findsOneWidget);
+      expect(find.text('SIGNAL LOST IN TIME'), findsOneWidget);
       expect(find.text('Play'), findsOneWidget);
     });
 

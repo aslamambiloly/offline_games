@@ -246,9 +246,9 @@ class _GameSpinnerState extends State<GameSpinner>
                         onPressed: _isSpinning
                             ? null
                             : () {
-                                if (_selectedGame != null) {
-                                  widget.onResult(_selectedGame!);
-                                }
+                                final game =
+                                    _selectedGame ?? _getDisplayedGame();
+                                widget.onResult(game);
                               },
                         color: const Color(0xFF39FF14),
                         textColor: Colors.black,

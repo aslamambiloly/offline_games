@@ -6,10 +6,23 @@ import 'connectivity_source.dart';
 class DefaultConnectivitySource implements ConnectivitySource {
   /// Creates a [DefaultConnectivitySource].
   DefaultConnectivitySource({InternetConnection? connection})
-      : _connection = connection ?? InternetConnection.createInstance() {
+      : _connection = connection ??
+            InternetConnection.createInstance(
+              checkInterval: const Duration(seconds: 2),
+            ) {
     _statusSubscription = _connection.onStatusChange.listen((status) {
       _controller.add(status == InternetStatus.connected);
     });
+    _checkInitialStatus();
+  }
+
+  Future<void> _checkInitialStatus() async {
+    try {
+      final online = await _connection.hasInternetAccess;
+      if (!_controller.isClosed) {
+        _controller.add(online);
+      }
+    } catch (_) {}
   }
 
   final InternetConnection _connection;

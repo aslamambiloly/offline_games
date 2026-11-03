@@ -91,27 +91,27 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
     }
   }
 
-  PixelGlyphType _resolveGlyph(String emoji) {
-    switch (emoji) {
-      case '🚀':
+  PixelGlyphType _resolveGlyph(String symbol) {
+    switch (symbol) {
+      case 'alien':
         return PixelGlyphType.alien;
-      case '⭐':
+      case 'star':
         return PixelGlyphType.star;
-      case '💎':
+      case 'sword':
         return PixelGlyphType.sword;
-      case '🍕':
+      case 'apple':
         return PixelGlyphType.apple;
-      case '🎸':
+      case 'gamepad':
         return PixelGlyphType.gamepad;
-      case '🎉':
+      case 'trophy':
         return PixelGlyphType.trophy;
-      case '🐱':
+      case 'heart':
         return PixelGlyphType.heart;
-      case '🔥':
+      case 'potion':
         return PixelGlyphType.potion;
       default:
         return PixelGlyphType
-            .values[emoji.hashCode.abs() % PixelGlyphType.values.length];
+            .values[symbol.hashCode.abs() % PixelGlyphType.values.length];
     }
   }
 

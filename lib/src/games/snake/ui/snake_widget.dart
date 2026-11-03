@@ -166,7 +166,7 @@ class _SnakeWidgetState extends State<SnakeWidget>
                       ),
                       if (widget.session.bestScore != null)
                         PixelText(
-                          '🏆 Best: ${widget.session.bestScore}',
+                          'HI: ${widget.session.bestScore}',
                           pixelSize: 1.8,
                           color: const Color(0xFFFFB800),
                           glowColor: const Color(0xFFFFB800),

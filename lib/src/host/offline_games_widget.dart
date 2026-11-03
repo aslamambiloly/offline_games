@@ -8,10 +8,12 @@ import '../core/games_mode.dart';
 import '../core/offline_game.dart';
 import '../storage/memory_score_store.dart';
 import '../storage/score_store.dart';
+import '../ui/back_online_banner.dart';
 import '../ui/game_frame.dart';
 import '../ui/offer_card.dart';
 import '../ui/picker.dart';
 import '../ui/retro_cloud_transition.dart';
+import '../ui/retro_screen.dart';
 import '../ui/spinner.dart';
 import '../ui/theme.dart';
 import 'offline_episode.dart';
@@ -222,9 +224,21 @@ class _OfflineGamesState extends State<OfflineGames>
     }
   }
 
+  OfflineEpisodeState _lastEpisodeState = OfflineEpisodeState.idle;
+  bool _offerCardReconnected = false;
+  OfflineGame? _pendingGameToStart;
+  bool _isSweepingClouds = false;
+
   void _onEpisodeStateChanged(OfflineEpisodeState state) {
     if (!mounted) return;
     setState(() {
+      if (_lastEpisodeState == OfflineEpisodeState.offered &&
+          state == OfflineEpisodeState.idle &&
+          !_isOverlayActive) {
+        _offerCardReconnected = true;
+      }
+      _lastEpisodeState = state;
+
       if (state == OfflineEpisodeState.playing &&
           _activeGame == null &&
           widget.mode is SingleMode) {
@@ -286,28 +300,40 @@ class _OfflineGamesState extends State<OfflineGames>
       _isManualOpen = false;
       _activeGame = null;
       _activeBestScore = null;
+      _offerCardReconnected = false;
     });
     widget.controller?.close();
     _episode.userExitedGame();
   }
 
-  bool _isSweepingClouds = false;
-
-  void _handlePlayPressed() {
+  void _startCloudSweepToGame([OfflineGame? game]) {
     final disableAnim = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     if (disableAnim) {
-      if (widget.mode is SingleMode) {
-        _selectAndStartGame();
-      }
-      _episode.userAcceptedOffer();
+      setState(() {
+        if (game != null) {
+          _selectAndStartGame(game);
+        } else if (widget.mode is SingleMode) {
+          _selectAndStartGame();
+        }
+        _offerCardReconnected = false;
+        _episode.userAcceptedOffer();
+      });
     } else {
       setState(() {
+        _pendingGameToStart = game;
         _isSweepingClouds = true;
       });
     }
   }
 
+  void _handlePlayPressed() {
+    _startCloudSweepToGame();
+  }
+
   void _handleDismissOffer() {
+    setState(() {
+      _offerCardReconnected = false;
+    });
     _episode.userDismissedOffer();
   }
 
@@ -334,7 +360,8 @@ class _OfflineGamesState extends State<OfflineGames>
     );
 
     final showOfferCard = widget.trigger == OfflineTrigger.auto &&
-        _episode.state == OfflineEpisodeState.offered &&
+        (_episode.state == OfflineEpisodeState.offered ||
+            _offerCardReconnected) &&
         !_isOverlayActive;
 
     final isPlayingGame = _isOverlayActive && _activeGame != null;
@@ -365,6 +392,7 @@ class _OfflineGamesState extends State<OfflineGames>
               child: SafeArea(
                 child: OfflineOfferCard(
                   actionLabel: _resolveActionLabel(),
+                  isBackOnline: _offerCardReconnected,
                   onPlay: _handlePlayPressed,
                   onDismiss: _handleDismissOffer,
                 ),
@@ -372,98 +400,140 @@ class _OfflineGamesState extends State<OfflineGames>
             ),
           if (_isOverlayActive)
             Positioned.fill(
-              child: HeroControllerScope.none(
-                child: Navigator(
-                  onGenerateRoute: (settings) {
-                    return PageRouteBuilder<void>(
-                      pageBuilder: (context, _, __) {
-                        if (isPlayingGame && session != null) {
-                          return GameFrame(
-                            game: _activeGame!,
-                            session: session,
-                            isBackOnline: _episode.state ==
-                                OfflineEpisodeState.playingOnline,
-                            onKeepPlaying: _episode.userChoseKeepPlaying,
-                            onBackToApp: _handleExit,
-                          );
-                        }
+              child: PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, _) {
+                  if (didPop) return;
+                  if (isPlayingGame) {
+                    _handleGameFrameExit();
+                  } else {
+                    _handleExit();
+                  }
+                },
+                child: HeroControllerScope.none(
+                  child: Navigator(
+                    key: ValueKey(
+                        'arcade-nav-${isPlayingGame ? _activeGame?.meta.id : "menu"}-${_episode.state == OfflineEpisodeState.playingOnline}'),
+                    onGenerateRoute: (settings) {
+                      return PageRouteBuilder<void>(
+                        pageBuilder: (context, _, __) {
+                          if (isPlayingGame && session != null) {
+                            return GameFrame(
+                              key: ValueKey('frame-${_activeGame!.meta.id}'),
+                              game: _activeGame!,
+                              session: session,
+                              isBackOnline: _episode.state ==
+                                  OfflineEpisodeState.playingOnline,
+                              onKeepPlaying: _episode.userChoseKeepPlaying,
+                              onBackToApp: _handleExit,
+                            );
+                          }
 
-                        if (widget.mode is PickerMode) {
-                          return Material(
-                            color: effectiveTheme.backgroundColor,
-                            child: SafeArea(
-                              child: Stack(
-                                children: [
-                                  GamePicker(
-                                    games: _effectiveGames,
-                                    scoreStore: _scoreStore,
-                                    onSelected: (game) {
-                                      setState(() {
-                                        _selectAndStartGame(game);
-                                      });
-                                    },
-                                  ),
-                                  Positioned(
-                                    top: 8,
-                                    left: 8,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.close_rounded),
-                                      tooltip: 'Close',
-                                      onPressed: _handleExit,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-
-                        // Default / SpinMode
+                      if (widget.mode is PickerMode) {
                         return Material(
                           color: effectiveTheme.backgroundColor,
                           child: SafeArea(
                             child: Stack(
                               children: [
-                                Center(
-                                  child: GameSpinner(
-                                    games: _effectiveGames,
-                                    random: _random,
-                                    previousGame: _lastPlayedGame,
-                                    onResult: (game) {
-                                      setState(() {
-                                        _selectAndStartGame(game);
-                                      });
-                                    },
-                                  ),
+                                GamePicker(
+                                  games: _effectiveGames,
+                                  scoreStore: _scoreStore,
+                                  onSelected: (game) {
+                                    _startCloudSweepToGame(game);
+                                  },
                                 ),
                                 Positioned(
-                                  top: 8,
-                                  left: 8,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.close_rounded),
-                                    tooltip: 'Close',
+                                  top: 12,
+                                  left: 12,
+                                  child: RetroCloseButton(
                                     onPressed: _handleExit,
                                   ),
                                 ),
+                                if (_episode.state ==
+                                    OfflineEpisodeState.playingOnline)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.68),
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: BackOnlineBanner(
+                                        onKeepPlaying:
+                                            _episode.userChoseKeepPlaying,
+                                        onBackToApp: _handleExit,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
                         );
-                      },
-                    );
-                  },
-                ),
+                      }
+
+                      // Default / SpinMode
+                      return Material(
+                        color: effectiveTheme.backgroundColor,
+                        child: SafeArea(
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: GameSpinner(
+                                  games: _effectiveGames,
+                                  random: _random,
+                                  previousGame: _lastPlayedGame,
+                                  onResult: (game) {
+                                    _startCloudSweepToGame(game);
+                                  },
+                                ),
+                              ),
+                              Positioned(
+                                top: 12,
+                                left: 12,
+                                child: RetroCloseButton(
+                                  onPressed: _handleExit,
+                                ),
+                              ),
+                              if (_episode.state ==
+                                  OfflineEpisodeState.playingOnline)
+                                Positioned.fill(
+                                  child: Container(
+                                    color:
+                                        Colors.black.withValues(alpha: 0.68),
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: BackOnlineBanner(
+                                      onKeepPlaying:
+                                          _episode.userChoseKeepPlaying,
+                                      onBackToApp: _handleExit,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
+          ),
+        ),
 
           // Clash of Clans cartoon cloud sweep overlay
           RetroCloudSweep(
             isSweeping: _isSweepingClouds,
             onMidpointReached: () {
               setState(() {
-                if (widget.mode is SingleMode) {
+                if (_pendingGameToStart != null) {
+                  _selectAndStartGame(_pendingGameToStart);
+                  _pendingGameToStart = null;
+                } else if (widget.mode is SingleMode) {
                   _selectAndStartGame();
                 }
+                _offerCardReconnected = false;
                 _episode.userAcceptedOffer();
               });
             },

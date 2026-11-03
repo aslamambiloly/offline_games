@@ -52,16 +52,16 @@ class MemoryCard {
   int get hashCode => Object.hash(id, emoji, state);
 }
 
-/// Default playful emoji set for Memory Match.
+/// Default retro pixel vector glyph set for Memory Match.
 const List<String> defaultMemoryEmojis = [
-  '🚀',
-  '⭐',
-  '💎',
-  '🍕',
-  '🎸',
-  '🎉',
-  '🐱',
-  '🔥',
+  'alien',
+  'star',
+  'sword',
+  'apple',
+  'gamepad',
+  'trophy',
+  'heart',
+  'potion',
 ];
 
 /// Pure-Dart immutable representation of a Memory Match game state.

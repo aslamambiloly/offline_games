@@ -39,7 +39,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Score: 0'), findsOneWidget);
-      expect(find.text('🏆 Best: 50'), findsOneWidget);
+      expect(find.text('HI: 50'), findsOneWidget);
       expect(find.byKey(const ValueKey('snake_viewport')), findsOneWidget);
     });
 

@@ -191,12 +191,11 @@ class OfflineEpisode {
     _setState(OfflineEpisodeState.offered);
   }
 
-  /// Immediately forces an online idle state for debugging or demo purposes.
+  /// Immediately forces an online state for debugging or demo purposes.
   void debugForceOnlineState() {
     _pendingTimer?.cancel();
     _pendingTimer = null;
-    _isOnline = true;
-    _setState(OfflineEpisodeState.idle);
+    onConnectivityChanged(true);
   }
 
   /// Releases resources, active timers, and connectivity subscriptions.

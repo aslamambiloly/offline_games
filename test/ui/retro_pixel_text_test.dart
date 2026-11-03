@@ -44,5 +44,20 @@ void main() {
       expect(find.bySemanticsLabel('GAME OVER'), findsOneWidget);
       handle.dispose();
     });
+
+    test('wrapText splits long text into lines matching maxWidth', () {
+      final lines = PixelText.wrapText(
+        text: 'FLIP CARDS AND MATCH EMOJI PAIRS WITH FEWEST MOVES',
+        maxWidth: 150,
+        pixelSize: 1.5,
+        letterSpacing: 2.0,
+      );
+
+      expect(lines.length, greaterThan(1));
+      for (final line in lines) {
+        final w = line.length * (5 * 1.5) + (line.length - 1) * 2.0;
+        expect(w, lessThanOrEqualTo(150));
+      }
+    });
   });
 }
