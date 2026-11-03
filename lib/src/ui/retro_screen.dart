@@ -133,11 +133,8 @@ class RetroPixelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final effectiveBg = backgroundColor ??
-        (isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E));
-    final effectiveBorder = borderColor ??
-        (isLight ? const Color(0xFF000000) : const Color(0xFF3B4468));
+    final effectiveBg = backgroundColor ?? const Color(0xFFFFFFFF);
+    final effectiveBorder = borderColor ?? const Color(0xFF000000);
     final effectiveShadow = shadowColor ?? Colors.black;
 
     return Material(
@@ -219,14 +216,9 @@ class _RetroPixelButtonState extends State<RetroPixelButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final defaultBg =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final defaultText =
-        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F121E);
-    final defaultBorder = isLight
-        ? const Color(0xFF000000)
-        : Colors.white.withValues(alpha: 0.6);
+    const defaultBg = Color(0xFF000000);
+    const defaultText = Color(0xFFFFFFFF);
+    const defaultBorder = Color(0xFF000000);
     final buttonColor = widget.color ?? defaultBg;
     final textCol = widget.textColor ?? defaultText;
     final borderCol = widget.borderColor ?? defaultBorder;

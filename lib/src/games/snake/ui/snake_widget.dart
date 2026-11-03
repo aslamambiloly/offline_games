@@ -137,21 +137,13 @@ class _SnakeWidgetState extends State<SnakeWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final scoreColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final hiColor =
-        isLight ? const Color(0xFFD97706) : const Color(0xFFFFB800);
-    final arenaBg =
-        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF090B14);
-    final arenaBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF2C324E);
-    final snakeColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final foodColor =
-        isLight ? const Color(0xFFDC2626) : const Color(0xFFFF2A85);
-    final gridColor =
-        isLight ? const Color(0xFFE5E7EB) : const Color(0xFF161A2B);
+    const scoreColor = Color(0xFF16A34A);
+    const hiColor = Color(0xFFD97706);
+    const arenaBg = Color(0xFFFFFFFF);
+    const arenaBorder = Color(0xFF000000);
+    const snakeColor = Color(0xFF000000);
+    const foodColor = Color(0xFFDC2626);
+    const gridColor = Color(0xFFE5E7EB);
 
     return Focus(
       focusNode: _focusNode,
@@ -176,14 +168,14 @@ class _SnakeWidgetState extends State<SnakeWidget>
                         'Score: ${_state.score}',
                         pixelSize: 2.0,
                         color: scoreColor,
-                        glowColor: isLight ? null : scoreColor,
+                        glowColor: null,
                       ),
                       if (widget.session.bestScore != null)
                         PixelText(
                           'HI: ${widget.session.bestScore}',
                           pixelSize: 1.8,
                           color: hiColor,
-                          glowColor: isLight ? null : hiColor,
+                          glowColor: null,
                         ),
                     ],
                   ),
@@ -243,42 +235,28 @@ class _SnakeWidgetState extends State<SnakeWidget>
                             // Retro Game Over Screen
                             if (_state.isGameOver)
                               Container(
-                                color: isLight
-                                    ? Colors.white.withValues(alpha: 0.92)
-                                    : Colors.black.withValues(alpha: 0.88),
+                                color: Colors.white.withValues(alpha: 0.92),
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    PixelText(
+                                    const PixelText(
                                       'Game Over',
                                       pixelSize: 3.2,
-                                      color: isLight
-                                          ? const Color(0xFFDC2626)
-                                          : const Color(0xFFFF2A85),
-                                      glowColor: isLight
-                                          ? null
-                                          : const Color(0xFFFF2A85),
+                                      color: Color(0xFFDC2626),
+                                      glowColor: null,
                                     ),
                                     const SizedBox(height: 12),
                                     PixelText(
                                       'FINAL SCORE: ${_state.score}',
                                       pixelSize: 2.0,
-                                      color: isLight
-                                          ? const Color(0xFF000000)
-                                          : const Color(0xFFFFB800),
+                                      color: const Color(0xFF000000),
                                     ),
                                     const SizedBox(height: 20),
                                     RetroPixelButton(
                                       label: 'PLAY AGAIN',
                                       onPressed: _startNewGame,
-                                      color: isLight
-                                          ? const Color(0xFF000000)
-                                          : const Color(0xFF39FF14),
-                                      textColor: isLight
-                                          ? Colors.white
-                                          : Colors.black,
                                       pixelSize: 2.0,
                                     ),
                                   ],
@@ -312,12 +290,9 @@ class _DpadControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final btnBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF1E2338);
-    final btnBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF4A5578);
-    final arrowColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    const btnBg = Color(0xFFFFFFFF);
+    const btnBorder = Color(0xFF000000);
+    const arrowColor = Color(0xFF000000);
     const btnSize = 46.0;
 
     Widget buildDpadBtn({
@@ -354,7 +329,7 @@ class _DpadControls extends StatelessWidget {
               type: glyph,
               pixelSize: 2.5,
               color: arrowColor,
-              glow: !isLight,
+              glow: false,
             ),
           ),
         ),

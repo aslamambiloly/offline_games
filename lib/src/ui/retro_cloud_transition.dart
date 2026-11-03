@@ -127,15 +127,14 @@ class _ClashCloudsPainter extends CustomPainter {
     }
 
     final halfW = size.width / 2.0;
-    final h = size.height;
 
     // Distance that each cloud bank has advanced towards center
     // coverage = 0.0 => offscreen by extra margin
     // coverage = 1.0 => overlapping in the center
     final extraMargin = size.width * 0.35;
     final leftX = -extraMargin + (halfW + extraMargin * 1.2) * coverage;
-    final rightX = (size.width + extraMargin) -
-        (halfW + extraMargin * 1.2) * coverage;
+    final rightX =
+        (size.width + extraMargin) - (halfW + extraMargin * 1.2) * coverage;
 
     // 1. Draw Left Cloud Bank
     _drawCloudBank(
@@ -153,46 +152,46 @@ class _ClashCloudsPainter extends CustomPainter {
       isLeft: false,
     );
 
-    // 3. Peak Coverage Retro Banner
-    if (progress >= 0.42 && progress <= 0.58) {
-      final bannerPaint = Paint()
-        ..color = Colors.black.withValues(alpha: 0.85);
-      final borderPaint = Paint()
-        ..color = const Color(0xFF00F0FF)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0;
+    // // 3. Peak Coverage Retro Banner
+    // if (progress >= 0.42 && progress <= 0.58) {
+    //   final bannerPaint = Paint()
+    //     ..color = Colors.black.withValues(alpha: 0.85);
+    //   final borderPaint = Paint()
+    //     ..color = const Color(0xFF00F0FF)
+    //     ..style = PaintingStyle.stroke
+    //     ..strokeWidth = 2.0;
 
-      final bannerRect = Rect.fromCenter(
-        center: Offset(halfW, h / 2.0),
-        width: 190,
-        height: 48,
-      );
+    //   final bannerRect = Rect.fromCenter(
+    //     center: Offset(halfW, h / 2.0),
+    //     width: 190,
+    //     height: 48,
+    //   );
 
-      canvas.drawRect(bannerRect, bannerPaint);
-      canvas.drawRect(bannerRect, borderPaint);
+    //   canvas.drawRect(bannerRect, bannerPaint);
+    //   canvas.drawRect(bannerRect, borderPaint);
 
-      final textPainter = TextPainter(
-        text: const TextSpan(
-          text: 'WARPING...',
-          style: TextStyle(
-            color: Color(0xFF00F0FF),
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 3,
-            decoration: TextDecoration.none,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
+    //   final textPainter = TextPainter(
+    //     text: const TextSpan(
+    //       text: 'WARPING...',
+    //       style: TextStyle(
+    //         color: Color(0xFF00F0FF),
+    //         fontSize: 16,
+    //         fontWeight: FontWeight.bold,
+    //         letterSpacing: 3,
+    //         decoration: TextDecoration.none,
+    //       ),
+    //     ),
+    //     textDirection: TextDirection.ltr,
+    //   )..layout();
 
-      textPainter.paint(
-        canvas,
-        Offset(
-          halfW - textPainter.width / 2.0,
-          h / 2.0 - textPainter.height / 2.0,
-        ),
-      );
-    }
+    //   textPainter.paint(
+    //     canvas,
+    //     Offset(
+    //       halfW - textPainter.width / 2.0,
+    //       h / 2.0 - textPainter.height / 2.0,
+    //     ),
+    //   );
+    // }
   }
 
   void _drawCloudBank({
@@ -223,7 +222,8 @@ class _ClashCloudsPainter extends CustomPainter {
     for (int i = 0; i < numPuffs; i++) {
       final y = i * stepY;
       // Stagger radius to create billowing cartoon shape
-      final radius = ((i % 2 == 0) ? 62.0 : 48.0) * (size.height / 600.0).clamp(0.8, 1.4);
+      final radius =
+          ((i % 2 == 0) ? 62.0 : 48.0) * (size.height / 600.0).clamp(0.8, 1.4);
       final puffCenter = Offset(edgeX, y);
 
       // Shadow

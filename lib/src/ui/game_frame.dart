@@ -67,25 +67,17 @@ class _GameFrameState extends State<GameFrame> {
   @override
   Widget build(BuildContext context) {
     final theme = OfflineGamesTheme.of(context);
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final topBarBg =
-        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF090B14);
-    final topBarBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF23293D);
-    final btnBg = isLight ? const Color(0xFFF3F4F6) : const Color(0xFF161A2B);
-    final btnBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF3B4468);
-    final arrowColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final titleColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final pauseBarsColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFFFFB800);
-    final resumeArrowColor =
-        isLight ? const Color(0xFF059669) : const Color(0xFF39FF14);
+    const topBarBg = Color(0xFFFFFFFF);
+    const topBarBorder = Color(0xFF000000);
+    const btnBg = Color(0xFFF3F4F6);
+    const btnBorder = Color(0xFF000000);
+    const arrowColor = Color(0xFF000000);
+    const titleColor = Color(0xFF000000);
+    const pauseBarsColor = Color(0xFF000000);
+    const resumeArrowColor = Color(0xFF16A34A);
 
     return Material(
-      color: theme.cardColor,
+      color: theme.backgroundColor,
       child: CrtScanlinesOverlay(
         scanlineOpacity: 0.08,
         vignetteOpacity: 0.35,
@@ -97,7 +89,7 @@ class _GameFrameState extends State<GameFrame> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: topBarBg,
                     border: Border(
                       bottom: BorderSide(
@@ -126,11 +118,11 @@ class _GameFrameState extends State<GameFrame> {
                                   width: 2.0,
                                 ),
                               ),
-                              child: PixelGlyphWidget(
+                              child: const PixelGlyphWidget(
                                 type: PixelGlyphType.arrowLeft,
                                 pixelSize: 2.2,
                                 color: arrowColor,
-                                glow: !isLight,
+                                glow: false,
                               ),
                             ),
                           ),
@@ -139,8 +131,8 @@ class _GameFrameState extends State<GameFrame> {
                         PixelGlyphWidget(
                           type: widget.game.meta.effectiveGlyph,
                           pixelSize: 2.6,
-                          glow: !isLight,
-                          color: isLight ? const Color(0xFF000000) : null,
+                          glow: false,
+                          color: null,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -148,7 +140,7 @@ class _GameFrameState extends State<GameFrame> {
                             widget.game.meta.title,
                             pixelSize: 2.0,
                             color: titleColor,
-                            glowColor: isLight ? null : titleColor,
+                            glowColor: null,
                           ),
                         ),
                         // Pause / Resume Toggle
@@ -172,11 +164,11 @@ class _GameFrameState extends State<GameFrame> {
                                     ),
                                   ),
                                   child: paused
-                                      ? PixelGlyphWidget(
+                                      ? const PixelGlyphWidget(
                                           type: PixelGlyphType.arrowRight,
                                           pixelSize: 2.0,
                                           color: resumeArrowColor,
-                                          glow: !isLight,
+                                          glow: false,
                                         )
                                       : Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -222,30 +214,22 @@ class _GameFrameState extends State<GameFrame> {
                           return GestureDetector(
                             onTap: _togglePause,
                             child: Container(
-                              color: isLight
-                                  ? Colors.white.withValues(alpha: 0.88)
-                                  : Colors.black.withValues(alpha: 0.82),
+                              color: Colors.white.withValues(alpha: 0.90),
                               alignment: Alignment.center,
-                              child: Column(
+                              child: const Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   PixelText(
                                     'PAUSED',
                                     pixelSize: 3.6,
-                                    color: isLight
-                                        ? const Color(0xFF000000)
-                                        : const Color(0xFFFFB800),
-                                    glowColor: isLight
-                                        ? null
-                                        : const Color(0xFFFFB800),
+                                    color: Color(0xFF000000),
+                                    glowColor: null,
                                   ),
-                                  const SizedBox(height: 14),
+                                  SizedBox(height: 14),
                                   PixelText(
                                     'PRESS TO RESUME',
                                     pixelSize: 1.8,
-                                    color: isLight
-                                        ? const Color(0xFF4B5563)
-                                        : const Color(0xFF8E9CB8),
+                                    color: Color(0xFF4B5563),
                                   ),
                                 ],
                               ),

@@ -123,21 +123,13 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final scoreColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final bestColor =
-        isLight ? const Color(0xFFD97706) : const Color(0xFFFFB800);
-    final arenaBg =
-        isLight ? const Color(0xFFFFFFFF) : const Color(0xFF090B14);
-    final arenaBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF2C324E);
-    final paddleColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final ballColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
-    final gridColor =
-        isLight ? const Color(0xFFE5E7EB) : const Color(0xFF131728);
+    const scoreColor = Color(0xFF000000);
+    const bestColor = Color(0xFFD97706);
+    const arenaBg = Color(0xFFFFFFFF);
+    const arenaBorder = Color(0xFF000000);
+    const paddleColor = Color(0xFF000000);
+    const ballColor = Color(0xFF000000);
+    const gridColor = Color(0xFFE5E7EB);
 
     return KeyboardListener(
       focusNode: _focusNode,
@@ -179,7 +171,7 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                         'Score: ${_state.score}',
                         pixelSize: 1.8,
                         color: scoreColor,
-                        glowColor: isLight ? null : scoreColor,
+                        glowColor: null,
                       ),
                       // Lives display with pixel hearts
                       Row(
@@ -198,10 +190,8 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                                 pixelSize: 1.5,
                                 color: i < _state.lives
                                     ? const Color(0xFFFF2A85)
-                                    : (isLight
-                                        ? const Color(0xFFE5E7EB)
-                                        : const Color(0xFF3A3F55)),
-                                glow: !isLight && i < _state.lives,
+                                    : const Color(0xFFE5E7EB),
+                                glow: false,
                               ),
                             ),
                           ],
@@ -212,7 +202,7 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                           'Best: ${widget.session.bestScore}',
                           pixelSize: 1.8,
                           color: bestColor,
-                          glowColor: isLight ? null : bestColor,
+                          glowColor: null,
                         ),
                     ],
                   ),
@@ -253,7 +243,7 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                                     state: _state,
                                     primaryColor: paddleColor,
                                     ballColor: ballColor,
-                                    ballGlowColor: paddleColor,
+                                    ballGlowColor: Colors.transparent,
                                     gridColor: gridColor,
                                   ),
                                 ),
@@ -269,21 +259,16 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: isLight
-                                          ? Colors.white.withValues(alpha: 0.85)
-                                          : Colors.black.withValues(alpha: 0.6),
+                                      color: Colors.white.withValues(alpha: 0.90),
                                       border: Border.all(
-                                        color: isLight
-                                            ? const Color(0xFF000000)
-                                            : const Color(0xFF2C324E),
+                                        color: const Color(0xFF000000),
+                                        width: 2.0,
                                       ),
                                     ),
-                                    child: PixelText(
+                                    child: const PixelText(
                                       'TAP OR DRAG TO LAUNCH',
                                       pixelSize: 1.3,
-                                      color: isLight
-                                          ? const Color(0xFF000000)
-                                          : const Color(0xFF00FFA3),
+                                      color: Color(0xFF000000),
                                     ),
                                   ),
                                 ),
@@ -292,9 +277,7 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                               if (_state.isGameOver)
                                 Container(
                                   key: const ValueKey('breakout_game_over'),
-                                  color: isLight
-                                      ? Colors.white.withValues(alpha: 0.92)
-                                      : Colors.black.withValues(alpha: 0.88),
+                                  color: Colors.white.withValues(alpha: 0.92),
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.all(20),
                                   child: Column(
@@ -304,36 +287,20 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                                         _state.isWon ? 'VICTORY!' : 'GAME OVER',
                                         pixelSize: 3.0,
                                         color: _state.isWon
-                                            ? (isLight
-                                                ? const Color(0xFF15803D)
-                                                : const Color(0xFF39FF14))
-                                            : (isLight
-                                                ? const Color(0xFFDC2626)
-                                                : const Color(0xFFFF2A85)),
-                                        glowColor: isLight
-                                            ? null
-                                            : (_state.isWon
-                                                ? const Color(0xFF39FF14)
-                                                : const Color(0xFFFF2A85)),
+                                            ? const Color(0xFF15803D)
+                                            : const Color(0xFFDC2626),
+                                        glowColor: null,
                                       ),
                                       const SizedBox(height: 12),
                                       PixelText(
                                         'FINAL SCORE: ${_state.score}',
                                         pixelSize: 2.0,
-                                        color: isLight
-                                            ? const Color(0xFF000000)
-                                            : const Color(0xFFFFB800),
+                                        color: const Color(0xFF000000),
                                       ),
                                       const SizedBox(height: 20),
                                       RetroPixelButton(
                                         key: const ValueKey('breakout_replay'),
                                         label: 'PLAY AGAIN',
-                                        color: isLight
-                                            ? const Color(0xFF000000)
-                                            : const Color(0xFF39FF14),
-                                        textColor: isLight
-                                            ? Colors.white
-                                            : Colors.black,
                                         onPressed: _restart,
                                       ),
                                     ],
@@ -356,7 +323,6 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                       key: const ValueKey('breakout_steer_left'),
                       label: 'Move Left',
                       glyph: PixelGlyphType.arrowLeft,
-                      isLight: isLight,
                       onTap: () {
                         setState(() {
                           _state.movePaddleBy(-28.0);
@@ -368,7 +334,6 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                       key: const ValueKey('breakout_launch_btn'),
                       label: 'Launch Ball',
                       glyph: PixelGlyphType.arrowUp,
-                      isLight: isLight,
                       onTap: _handleTap,
                     ),
                     const SizedBox(width: 24),
@@ -376,7 +341,6 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                       key: const ValueKey('breakout_steer_right'),
                       label: 'Move Right',
                       glyph: PixelGlyphType.arrowRight,
-                      isLight: isLight,
                       onTap: () {
                         setState(() {
                           _state.movePaddleBy(28.0);
@@ -398,13 +362,10 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
     required String label,
     required PixelGlyphType glyph,
     required VoidCallback onTap,
-    required bool isLight,
   }) {
-    final btnBg = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF1E2338);
-    final btnBorder =
-        isLight ? const Color(0xFF000000) : const Color(0xFF4A5578);
-    final arrowColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
+    const btnBg = Color(0xFFFFFFFF);
+    const btnBorder = Color(0xFF000000);
+    const arrowColor = Color(0xFF000000);
 
     return Semantics(
       label: label,
@@ -434,7 +395,7 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
             type: glyph,
             pixelSize: 2.5,
             color: arrowColor,
-            glow: !isLight,
+            glow: false,
           ),
         ),
       ),

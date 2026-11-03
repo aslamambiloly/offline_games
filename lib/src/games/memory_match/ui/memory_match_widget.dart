@@ -117,22 +117,12 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final movesColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF00F0FF);
-    final pairsColor =
-        isLight ? const Color(0xFF059669) : const Color(0xFF39FF14);
-    final bestColor =
-        isLight ? const Color(0xFFD97706) : const Color(0xFFFFB800);
-    final victoryBg =
-        isLight ? const Color(0xFFDCFCE7) : const Color(0xFF0A1F13);
-    final victoryBorder =
-        isLight ? const Color(0xFF16A34A) : const Color(0xFF39FF14);
-    final victoryTitle =
-        isLight ? const Color(0xFF15803D) : const Color(0xFF39FF14);
-    final replayBtnColor =
-        isLight ? const Color(0xFF000000) : const Color(0xFF39FF14);
-    final replayBtnText = isLight ? Colors.white : Colors.black;
+    const movesColor = Color(0xFF000000);
+    const pairsColor = Color(0xFF16A34A);
+    const bestColor = Color(0xFFD97706);
+    const victoryBg = Color(0xFFDCFCE7);
+    const victoryBorder = Color(0xFF16A34A);
+    const victoryTitle = Color(0xFF15803D);
 
     return Center(
       child: ConstrainedBox(
@@ -153,20 +143,20 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                       'Moves: ${_state.movesCount}',
                       pixelSize: 1.8,
                       color: movesColor,
-                      glowColor: isLight ? null : movesColor,
+                      glowColor: null,
                     ),
                     PixelText(
                       'Pairs: ${_state.pairsMatched}/${_state.totalPairs}',
                       pixelSize: 1.8,
                       color: pairsColor,
-                      glowColor: isLight ? null : pairsColor,
+                      glowColor: null,
                     ),
                     if (widget.session.bestScore != null)
                       PixelText(
                         'Best: ${widget.session.bestScore}',
                         pixelSize: 1.8,
                         color: bestColor,
-                        glowColor: isLight ? null : bestColor,
+                        glowColor: null,
                       ),
                   ],
                 ),
@@ -190,30 +180,14 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                     final glyph = _resolveGlyph(card.emoji);
 
                     final cardBg = isMatched
-                        ? (isLight
-                            ? const Color(0xFFDCFCE7)
-                            : const Color(0xFF0B2416))
+                        ? const Color(0xFFDCFCE7)
                         : isFaceUp
-                            ? (isLight
-                                ? const Color(0xFFFFFFFF)
-                                : const Color(0xFF131828))
-                            : (isLight
-                                ? const Color(0xFFF3F4F6)
-                                : const Color(0xFF171B2C));
+                            ? const Color(0xFFFFFFFF)
+                            : const Color(0xFFF3F4F6);
                     final cardBorder = isMatched
-                        ? (isLight
-                            ? const Color(0xFF16A34A)
-                            : const Color(0xFF39FF14))
-                        : isFaceUp
-                            ? (isLight
-                                ? const Color(0xFF000000)
-                                : const Color(0xFF00F0FF))
-                            : (isLight
-                                ? const Color(0xFF000000)
-                                : const Color(0xFF3A4465));
-                    final qColor = isLight
-                        ? const Color(0xFF000000)
-                        : const Color(0xFF3A4465);
+                        ? const Color(0xFF16A34A)
+                        : const Color(0xFF000000);
+                    const qColor = Color(0xFF000000);
 
                     return Semantics(
                       label:
@@ -230,17 +204,11 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                               color: cardBorder,
                               width: isMatched || isFaceUp ? 2.5 : 2.0,
                             ),
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
-                                color: isMatched
-                                    ? (isLight
-                                        ? const Color(0xFF16A34A)
-                                            .withValues(alpha: 0.3)
-                                        : const Color(0xFF39FF14)
-                                            .withValues(alpha: 0.3))
-                                    : Colors.black,
-                                offset: const Offset(3, 3),
-                                blurRadius: isMatched ? 6 : 0,
+                                color: Colors.black,
+                                offset: Offset(3, 3),
+                                blurRadius: 0,
                               ),
                             ],
                           ),
@@ -249,14 +217,12 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                               ? PixelGlyphWidget(
                                   type: glyph,
                                   pixelSize: 4.5,
-                                  glow: !isLight,
-                                  color: isLight && isMatched
+                                  glow: false,
+                                  color: isMatched
                                       ? const Color(0xFF15803D)
-                                      : isLight
-                                          ? const Color(0xFF000000)
-                                          : null,
+                                      : null,
                                 )
-                              : PixelText(
+                              : const PixelText(
                                   '?',
                                   pixelSize: 3.5,
                                   color: qColor,
@@ -281,27 +247,23 @@ class _MemoryMatchWidgetState extends State<MemoryMatchWidget> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          PixelText(
+                          const PixelText(
                             'STAGE CLEARED!',
                             pixelSize: 2.2,
                             color: victoryTitle,
-                            glowColor: isLight ? null : victoryTitle,
+                            glowColor: null,
                           ),
                           const SizedBox(height: 4),
                           PixelText(
                             'MOVES: ${_state.movesCount} • SCORE: ${_state.computeScore()}',
                             pixelSize: 1.6,
-                            color: isLight
-                                ? const Color(0xFF000000)
-                                : const Color(0xFFFFB800),
+                            color: const Color(0xFF000000),
                           ),
                         ],
                       ),
                       RetroPixelButton(
                         label: 'REPLAY',
                         onPressed: _startNewGame,
-                        color: replayBtnColor,
-                        textColor: replayBtnText,
                         minWidth: 70,
                       ),
                     ],
