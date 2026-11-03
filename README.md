@@ -29,7 +29,7 @@ Do your users feel great when they board an airplane, enter an elevator, walk in
 Not really:
 
 ❌ **Users are greeted with an empty screen, a sad gray dinosaur, or a broken spinner**.<br>
-❌ Adding a mini-game normally means pulling in heavy engines (Flame, Unity, Godot), ballooning your app bundle by 15–40+ MB.<br>
+❌ Adding a mini-game normally means pulling in heavy engines (Flame, Unity, Godot), ballooning your app bundle by 15-40+ MB.<br>
 ❌ Managing reachability detection, debouncing fleeting network blips, and showing dismissible UI without hijacking navigation stacks is messy and fragile.<br>
 
 ## The `Solution` : )
@@ -91,7 +91,7 @@ Not really:
 | **User Experience** | Blank error screen, dead dinosaur, or endless spinner | Engaging, delightful 8-bit retro arcade |
 | **Setup Complexity** | Complex custom network listeners & navigation keys | **1 line**: `OfflineGames(child: child!)` in `MaterialApp.builder` |
 | **Bundle Size Overhead** | Minimal | **< 120 KB total archive** (0 assets, 0 fonts) |
-| **Engine Dependencies** | Flame / Unity / Godot (15–40+ MB) | **Zero** — 100% Pure Flutter Canvas & Widgets |
+| **Engine Dependencies** | Flame / Unity / Godot (15-40+ MB) | **Zero**: 100% Pure Flutter Canvas & Widgets |
 | **Reachability Detection** | Naive Wi-Fi toggle checking (fails behind captive portals) | Honest ICMP/HTTP reachability checks with debounce |
 | **Visual Polish** | Generic material dialogs | Balanced neo-brutalist white cards, solid black borders, CRT scanlines |
 | **Reconnection UX** | Abruptly crashes or dismisses screen | Gentle banner: *"Keep playing"* or *"Return to app"* |
@@ -325,7 +325,7 @@ We welcome new mini-games from the community! Writing and adding a game takes **
    dart run tool/check_pixel_theme.dart
    flutter test tool/check_authors.dart
    ```
-5. Open a PR — once merged, your game and author credit will ship with the package!
+5. Open a PR: once merged, your game and author credit will ship with the package!
 
 See also [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`llms.txt`](llms.txt) for instructions tailored for AI pair programmers.
 
@@ -366,7 +366,7 @@ It provides agents with:
 
 ## Authors & Maintainers
 
-- **Aslam Ambiloly** ([@aslamambiloly](https://github.com/aslamambiloly)) — Creator and Maintainer
+- **Aslam Ambiloly** ([@aslamambiloly](https://github.com/aslamambiloly)) - Creator and Maintainer
 
 See [AUTHORS.md](AUTHORS.md) for full contributor credits.
 
@@ -374,4 +374,4 @@ See [AUTHORS.md](AUTHORS.md) for full contributor credits.
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
