@@ -92,13 +92,11 @@ class _OfflineOfferCardState extends State<OfflineOfferCard>
     // Both Dark and Light modes use the clean, high-contrast light mode card styling
     const cardBg = Color(0xFFFFFFFF);
     const borderColor = Color(0xFF000000);
-    final iconBg = isBackOnline
-        ? const Color(0xFFDCFCE7)
-        : const Color(0xFFF3F4F6);
+    final iconBg =
+        isBackOnline ? const Color(0xFFDCFCE7) : const Color(0xFFF3F4F6);
     const iconBorder = Color(0xFF000000);
-    final glyphColor = isBackOnline
-        ? const Color(0xFF15803D)
-        : const Color(0xFF000000);
+    final glyphColor =
+        isBackOnline ? const Color(0xFF15803D) : const Color(0xFF000000);
     const titleColor = Color(0xFF000000);
     const subtitleColor = Color(0xFF4B5563);
 

@@ -259,7 +259,8 @@ class _BreakoutWidgetState extends State<BreakoutWidget>
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.90),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.90),
                                       border: Border.all(
                                         color: const Color(0xFF000000),
                                         width: 2.0,

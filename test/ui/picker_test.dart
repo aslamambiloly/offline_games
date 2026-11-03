@@ -43,8 +43,7 @@ void main() {
   );
 
   group('GamePicker', () {
-    testWidgets('renders all games and pixel glyph cards',
-        (tester) async {
+    testWidgets('renders all games and pixel glyph cards', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

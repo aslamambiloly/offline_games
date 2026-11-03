@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('all games adhere to 100% pure pixel vector guidelines', () {
-    final result = Process.runSync('dart', ['run', 'tool/check_pixel_theme.dart']);
+    final result =
+        Process.runSync('dart', ['run', 'tool/check_pixel_theme.dart']);
     expect(
       result.exitCode,
       equals(0),

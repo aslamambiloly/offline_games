@@ -347,4 +347,3 @@ class RetroCloseButton extends StatelessWidget {
     );
   }
 }
-

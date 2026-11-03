@@ -129,7 +129,9 @@ class PixelText extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = maxWidth ??
-            (constraints.hasBoundedWidth ? constraints.maxWidth : double.infinity);
+            (constraints.hasBoundedWidth
+                ? constraints.maxWidth
+                : double.infinity);
 
         final lines = wrapText(
           text: text.toUpperCase(),

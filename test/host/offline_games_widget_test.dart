@@ -267,12 +267,14 @@ void main() {
       expect(find.text('Playing Dummy Game'), findsOneWidget);
     });
 
-    testWidgets('debugForceOffline: true triggers offline simulation immediately',
+    testWidgets(
+        'debugForceOffline: true triggers offline simulation immediately',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           builder: (context, child) => OfflineGames(
-            connectivity: fakeConnectivity, // fakeConnectivity is initially online
+            connectivity:
+                fakeConnectivity, // fakeConnectivity is initially online
             debugForceOffline: true,
             child: child!,
           ),

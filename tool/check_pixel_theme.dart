@@ -34,7 +34,8 @@ void main() {
       // Skip comments or metadata definitions (e.g. fallback emoji string in GameMeta)
       final trimmed = line.trim();
       if (trimmed.startsWith('//') || trimmed.startsWith('*')) continue;
-      if (trimmed.contains("emoji:") || trimmed.contains("final String emoji")) {
+      if (trimmed.contains("emoji:") ||
+          trimmed.contains("final String emoji")) {
         continue;
       }
 

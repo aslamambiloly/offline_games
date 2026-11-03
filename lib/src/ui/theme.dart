@@ -93,8 +93,7 @@ class OfflineGamesTheme extends ThemeExtension<OfflineGamesTheme> {
     }
 
     return OfflineGamesTheme(
-      primaryColor:
-          isLight ? const Color(0xFF0072B5) : const Color(0xFF00F0FF),
+      primaryColor: isLight ? const Color(0xFF0072B5) : const Color(0xFF00F0FF),
       cardColor: defaultCard,
       backgroundColor: defaultBg,
       borderRadius: const BorderRadius.all(Radius.circular(4)),
