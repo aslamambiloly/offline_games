@@ -12,11 +12,24 @@
   <a href="https://ko-fi.com/N7K021PF59"><img src="https://raw.githubusercontent.com/aslamambiloly/curved_navigation_bar_pro/main/doc/coffee.png" alt="Support me on Ko-fi" width="400"></a>
 </p>
 
-A plug-and-play mini-arcade for Flutter apps when the device goes offline. Zero configuration, zero heavy engines, and authentic 8-bit retro vibes in **under 120 KB**.
+A plug & play mini arcade for flutter apps when the device goes offline. Zero configuration, zero heavy engines, and authentic 8-bit retro vibes in **under 120 KB**.
 
-## The Offline Dread
+<!-- ## The Offline Dread -->
 
-Airplane mode, elevator rides, subway tunnels, or lost signals: users usually see a sad blank screen or frozen spinner 🥲. **`offline_games`** turns that downtime into instant retro entertainment with **1 line of code**.
+Users usually see a sad blank screen or frozen spinner when the network gets lost 🥲. **`offline_games`** turns that downtime into instant retro entertainment with just **one line of code**.
+
+```diff
++ import 'package:offline_games/offline_games.dart';
+  ...
+  return MaterialApp(
+    title: 'My App',
++   builder: (context, child) => OfflineGames(
++     child: child!,
++   ),
+    home: const MyHomePage(),
+  );
+  ...
+```
 
 ## Happy News : )
 
