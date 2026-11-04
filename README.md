@@ -62,7 +62,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  offline_games: ^1.0.0
+  offline_games: ^1.0.1
 ```
 
 Then run:

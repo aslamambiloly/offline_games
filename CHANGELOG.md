@@ -2,6 +2,11 @@
 
 All notable changes to `offline_games` will be documented in this file.
 
+## 1.0.1
+
+- **Dependencies**:
+  - Expanded `internet_connection_checker_plus` constraint to `'>=2.5.2 <4.0.0'` to support version 3.x and achieve a 160/160 pub score.
+
 ## 1.0.0
 
 - **Production Release**:

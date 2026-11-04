@@ -1,6 +1,6 @@
 name: offline_games
 description: A plug-and-play mini arcade for Flutter apps when the device goes offline. Zero-config, dependency-free games, with author credits.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/aslamambiloly/offline_games
 repository: https://github.com/aslamambiloly/offline_games
 issue_tracker: https://github.com/aslamambiloly/offline_games/issues
@@ -18,7 +18,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  internet_connection_checker_plus: ^2.5.2
+  internet_connection_checker_plus: '>=2.5.2 <4.0.0'
 
 dev_dependencies:
   flutter_test:
