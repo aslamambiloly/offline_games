@@ -23,9 +23,7 @@ Users usually see a sad blank screen or frozen spinner when the network gets los
   ...
   return MaterialApp(
     title: 'My App',
-+   builder: (context, child) => OfflineGames(
-+     child: child!,
-+   ),
++   builder: (context, child) => OfflineGames(child: child!),
     home: const MyHomePage(),
   );
   ...
