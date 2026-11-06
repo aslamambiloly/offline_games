@@ -2,6 +2,10 @@
 
 All notable changes to `offline_games` will be documented in this file.
 
+## 1.0.3
+
+- Updated documentation and usage guides.
+
 ## 1.0.1
 
 - **Dependencies**:
