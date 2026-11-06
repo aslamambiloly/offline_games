@@ -259,7 +259,7 @@ flutter run
 
 ## Contributing
 
-PRs and new games are welcome! See [< 1 Hour Contribution Guide](doc/CONTRIBUTING_GAMES.md).
+PRs and new games are welcome! See our [One Hour Contribution Guide](doc/CONTRIBUTING_GAMES.md).
 
 ## License
 
