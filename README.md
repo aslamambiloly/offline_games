@@ -29,6 +29,17 @@ Users usually see a sad blank screen or frozen spinner when the network gets los
   ...
 ```
 
+<table style="border-collapse: separate; border-spacing: 0px; border: 0;">
+  <tr>
+  <td valign="middle">
+    <img src="https://raw.githubusercontent.com/aslamambiloly/offline_games/main/doc/s1.gif" width="500"/>
+  </td>
+  <td valign="middle">
+    <img src="https://raw.githubusercontent.com/aslamambiloly/offline_games/main/doc/s2.gif" width="500"/>
+  </td>
+</tr>
+</table>
+
 ## Happy News : )
 
 <!-- > [!NOTE] -->
